@@ -27,45 +27,51 @@
 <script>
 /*globals jml, CKEDITOR */
 (function () {'use strict';
-var i, editor, languages, backgroundColor,
-    // Could pass option 'readOnly' if determine from protocol that this is view mode only
-    pathID,
-    saveMessage = 'webapp-save',
-    excludedMessages = [saveMessage];
+
+let editor, backgroundColor,
+// Could pass option 'readOnly' if determine from protocol that this is view mode only
+    pathID;
+const saveMessage = 'save';
+const excludedMessages = [saveMessage];
 
 function $ (sel) {
     return document.querySelector(sel);
 }
 function listenForMessages() {
-    window.addEventListener('message', function(e) {
-        if (e.origin !== window.location.origin || // PRIVACY AND SECURITY! (for viewing and saving, respectively)
-            (!Array.isArray(e.data) || excludedMessages.indexOf(e.data[0]) > -1) // Validate format and avoid our post below
-        ) {
+    window.addEventListener('message', function ({data, origin}) {
+        let type, content;
+        console.log('ddd', data);
+        try {
+            ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+            if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+                excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
+            ) {
+                return;
+            }
+        } catch (err) {
             return;
         }
-        var messageType = e.data[0];
-        switch (messageType) {
-            case 'webapp-view':
+        switch (type) {
+            case 'view':
                 // Populate the contents
-                pathID = e.data[1];
                 document.title += ': ' + pathID;
-                editor.setData(e.data[2]);
+                editor.setData(content);
                 if ($('a.cke_button__save')) {
                     $('a.cke_button__save').disabled = false;
                 }
                 break;
-            case 'webapp-save-end':
+            case 'save-end':
                 $('a.cke_button__save').style.backgroundColor = 'blue';
                 setTimeout(function () {
                     $('a.cke_button__save').style.backgroundColor = backgroundColor;
                 }, 120);
-                
-                // alert('save complete for pathID ' + e.data[1] + '!');
+
+                // alert('save complete for pathID ' + pathID + '!');
                 break;
             default:
-                throw 'Unexpected mode';
+                throw new Error('Unexpected mode: ' + type);
         }
-    }, false);
+    });
 }
 
 
@@ -83,7 +89,7 @@ function createEditor(languageCode) {
                 // Wait for the editor to be ready to set
                 // the language combo.
                 editor.execCommand('maximize'); // Full screen mode
-                var languages = document.getElementById('languages');
+                const languages = document.getElementById('languages');
                 languages.value = this.langCode;
                 languages.disabled = false;
                 if (!pathID) { // Disable save button before adding a listener until we get a path
@@ -91,7 +97,7 @@ function createEditor(languageCode) {
                 }
                 backgroundColor = $('a.cke_button__save').style.backgroundColor;
                 /*
-                var command = editor.addCommand('save', {
+                const command = editor.addCommand('save', {
                     modes: { wysiwyg: 1, source: 1 },
                     exec: function (editor) { // Add here custom function for the save button
                         alert('You clicked the save button in CKEditor toolbar!');
@@ -99,9 +105,9 @@ function createEditor(languageCode) {
                 });
                 editor.ui.addButton('Save', { label: 'Save', command: 'save' });
                 */
-                
-                editor.on('beforeCommandExec', function (e) {
-                    if (e.data.name === 'save') {
+
+                editor.on('beforeCommandExec', function ({data}) {
+                    if (data.name === 'save') {
                         throw '';
                     }
                 });
@@ -114,14 +120,20 @@ function createEditor(languageCode) {
                         alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
                         return;
                     }
-                    window.postMessage([saveMessage, pathID, editor.getData()], window.location.origin);
+                    window.postMessage({
+                        webappfind: {
+                            type: saveMessage,
+                            pathID,
+                            content: editor.getData()
+                        }
+                    }, location.origin);
                 }
                 $('a.cke_button__save').addEventListener('click', saveToDisk);
-                
-                editor.document.on('keydown', function (e) {
-                    if (e.data.$.keyCode == 83 && e.data.$.ctrlKey) {
-                        e.data.$.preventDefault(true);
-                        saveToDisk(e.data.$);
+
+                editor.document.on('keydown', function ({data}) {
+                    if (data.$.keyCode == 83 && data.$.ctrlKey) {
+                        data.$.preventDefault(true);
+                        saveToDisk(data.$);
                         return false;
                     }
                 });
@@ -130,9 +142,9 @@ function createEditor(languageCode) {
     });
 }
 
-listenForMessages(); 
-languages = $('#languages');
-for (i = 0; i < window.CKEDITOR_LANGS.length ; i++ ) {
+listenForMessages();
+const languages = $('#languages');
+for (let i = 0; i < window.CKEDITOR_LANGS.length ; i++ ) {
     jml('option', {value: window.CKEDITOR_LANGS[i].code}, [
         window.CKEDITOR_LANGS[i].name
     ], languages);
