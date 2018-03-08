@@ -61,15 +61,11 @@ function listenForMessages() {
                 }
                 break;
             case 'save-end':
-                $('a.cke_button__save').style.backgroundColor = 'blue';
-                setTimeout(function () {
-                    $('a.cke_button__save').style.backgroundColor = backgroundColor;
-                }, 120);
-
+                $('a.cke_button__save').style.backgroundColor = backgroundColor;
                 // alert('save complete for pathID ' + pathID + '!');
                 break;
             default:
-                throw new Error('Unexpected mode: ' + type);
+                throw new Error('Unexpected WebAppFind event type: ' + type);
         }
     });
 }
@@ -120,6 +116,7 @@ function createEditor(languageCode) {
                         alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
                         return;
                     }
+                    $('a.cke_button__save').style.backgroundColor = 'blue';
                     window.postMessage({
                         webappfind: {
                             type: saveMessage,
