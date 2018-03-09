@@ -61,7 +61,9 @@ function listenForMessages() {
                 }
                 break;
             case 'save-end':
-                $('a.cke_button__save').style.backgroundColor = backgroundColor;
+                setTimeout(function () {
+                    $('a.cke_button__save').style.backgroundColor = backgroundColor;
+                }, 300);
                 // alert('save complete for pathID ' + pathID + '!');
                 break;
             default:
