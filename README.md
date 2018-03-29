@@ -27,6 +27,7 @@ WebAppFind to work as a WebExtension with support in modern browsers like Firefo
 1. Cookie to hold JSHint options (or CSS lint options) and for remembering XML "schemaInfo"
 1. XML dialect demo with schema for CodeMirror xmlautocomplete (also a JSON schema for checking JSON dialects if not autocomplete as well?)
 1. Images/canvas: http://www.picozu.com/editor/ ? Animated GIFs?
+1. Ico already includes this? <https://gist.github.com/brettz9/7163724>
 1. Animated SVG?
 1. Audio: http://plucked.de/ and https://github.com/plucked/html5-audio-editor ?
 1. Video - popcorn?
