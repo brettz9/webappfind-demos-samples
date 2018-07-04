@@ -2,10 +2,11 @@
 
 This repo contains web app demos and sample files that can be opened from the desktop into [WebAppFind](https://github.com/brettz9/webappfind).
 
-While these demos should work on the 2.0.0 present in `master` (though as they were migrated
+While these demos should work on the 2.0.0 present in `master` (though as they were migrated,
 there may be some dependencies like Jamilih missing), that version will only work
-with a much earlier version of Firefox. Work is presently underway on a 3.0.0 version of
+with a much earlier version of Firefox. An alpha release is coming out for the 3.0.0 version of
 WebAppFind to work as a WebExtension with support in modern browsers like Firefox or Chrome.
+Currently on the `html.html` demo follows this new API.
 
 ## To-dos
 
