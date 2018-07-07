@@ -39,8 +39,8 @@ function $ (sel) {
 }
 function listenForMessages() {
     window.addEventListener('message', function ({data, origin}) {
-        let type, content;
         console.log('ddd', data);
+        let type, content;
         try {
             ({type, pathID, content} = data.webappfind); // May throw if data is not an object
             if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on

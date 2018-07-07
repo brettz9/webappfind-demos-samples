@@ -1,0 +1,29 @@
+{
+  "name": "webappfind-demos-samples",
+  "version": "0.0.1",
+  "description": "Demos and sample files for exploring WebAppFind open web apps from desktop functionality",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brettz9/webappfind-demos-samples.git"
+  },
+  "keywords": [
+    "webappfind",
+    "openwith",
+    "webapp"
+  ],
+  "author": "Brett Zamir",
+  "dependencies": {
+    "svgedit": "^3.0.0-alpha.4"
+  },
+  "contributors": [],
+  "engines": {},
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brettz9/webappfind-demos-samples/issues"
+  },
+  "homepage": "https://github.com/brettz9/webappfind-demos-samples#readme",
+  "devDependencies": {}
+}
