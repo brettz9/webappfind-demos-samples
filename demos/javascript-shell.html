@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>JavaScript Shell Exec</title>
+    </head>
+    <body>
+        <script>
+        window.addEventListener('message', function ({origin, data}) {
+            if (origin !== location.origin ||
+                !data || !data.webappfind || !data.webappfind.type
+            ) {
+                return;
+            }
+            // use indirect (global) eval()
+            (1, eval)(data.webappfind.content);
+        });
+        </script>
+    </body>
+</html>
+    
