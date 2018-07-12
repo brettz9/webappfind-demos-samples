@@ -12,6 +12,7 @@ function $ (sel) {
     return document.querySelector(sel);
 }
 
+let i = 0;
 window.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('message', function ({origin, data}) {
         if (origin !== location.origin) { // PRIVACY AND SECURITY! (for viewing and saving, respectively)
@@ -28,7 +29,13 @@ window.addEventListener('DOMContentLoaded', function () {
 
     // Requesting the path in the following is not necessary, nor probably
     //   useful since the supplied path is not going to change!
-    window.postMessage({webappfind: {command: 'directoryPath'}}, window.location.origin);
+    window.postMessage({
+        webappfind: {
+            id: i++
+            type: 'readdir',
+            pathID: ''
+        }
+    }, window.location.origin);
 });
 
 }());
