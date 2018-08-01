@@ -8,15 +8,18 @@
         addMetas([
           {
             executableName: 'Edit HTML',
+            id: 'me.brett-zamir.demos.editHTML',
             mode: 'edit',
             extensions: 'html',
             defaultExtensions: 'html',
             contentTypes: 'public.html',
             defaultContentTypes: 'public.html',
-            site: 'http://brett-zamir.me/webappfind/demos/html.html&id=me.brett-zamir.edithtml'
+            site: 'http://localhost:8005/demos/html.html&id=me.brett-zamir.demos.editHTML'
+            // site: 'http://brett-zamir.me/webappfind/demos/html.html&id=me.brett-zamir.demos.editHTML'
           },
           {
             executableName: 'Edit SVG',
+            id: 'me.brett-zamir.demos.editSVG',
             mode: 'edit',
             extensions: 'svg',
             defaultExtensions: 'svg',
@@ -24,35 +27,6 @@
             defaultContentType: 'public.svg-image',
             site: 'http://localhost:8005/node_modules/svgedit/editor/svg-editor-es.html?extensions=ext-webappfind.js',
           }
-          /*
-          {
-            mode: 'view',
-            file: 'aFile1.js',
-            id: 'anID1',
-            extensions: ['aaa', 'bbb', 'ccc'],
-            contentTypes: ['text/plain', 'text/json']
-          },
-          {
-            mode: 'edit',
-            file: 'aFile2.js',
-            id: 'anID2',
-            extensions: ['aaa' 'bbb' 'ccc'],
-            contentTypes: ['text/plain', 'text/json'],
-            defaultExtensions: 'bbb',
-            defaultContentTypes: 'text/json'
-          },
-          {
-            executableName: 'anExecName',
-            mode: 'edit',
-            executablePath: 'some/path/'
-            binary: 'on',
-            site: 'http://example.com'
-          },
-          {
-            executableName: 'anotherExecName',
-            args: {a: '&'}
-          }
-          */
         ]);
         </script>
     </head>

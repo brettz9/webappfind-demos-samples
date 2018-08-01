@@ -36,3 +36,33 @@ export function addMetas (metaInfos) {
       document.head.appendChild(meta);
     });
 }
+
+/*
+{
+  mode: 'view',
+  file: 'aFile1.js',
+  id: 'anID1',
+  extensions: ['aaa', 'bbb', 'ccc'],
+  contentTypes: ['text/plain', 'text/json']
+},
+{
+  mode: 'edit',
+  file: 'aFile2.js',
+  id: 'anID2',
+  extensions: ['aaa' 'bbb' 'ccc'],
+  contentTypes: ['text/plain', 'text/json'],
+  defaultExtensions: 'bbb',
+  defaultContentTypes: 'text/json'
+},
+{
+  executableName: 'anExecName',
+  mode: 'edit',
+  executablePath: 'some/path/'
+  binary: 'on',
+  site: 'http://example.com'
+},
+{
+  executableName: 'anotherExecName',
+  args: {a: '&'}
+}
+*/
