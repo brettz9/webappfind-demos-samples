@@ -24,10 +24,11 @@ export function serializeParams (params) {
 }
 
 /**
- * @param {module:MetaWebAppFind.Params[]} metaInfos
+ * @param {module:MetaWebAppFind.Params|module:MetaWebAppFind.Params[]} metaInfos
  * @returns {undefined}
  */
 export function addMetas (metaInfos) {
+    metaInfos = Array.isArray(metaInfos) ? metaInfos : [metaInfos];
     metaInfos.forEach((params) => {
       const meta = document.createElement('meta');
       meta.name = 'webappfind';
