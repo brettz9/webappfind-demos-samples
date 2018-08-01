@@ -2,13 +2,59 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta name="webappfind" content="mode=view&file=aFile1.js&id=anID1&extensions=aaa bbb ccc&contentTypes=text%2Fplain text%2Fjson" />
-        <meta name="webappfind" content="mode=edit&file=aFile2.js&id=anID2&extensions=aaa bbb ccc&contentTypes=text%2Fplain text%2Fjson&defaultExtensions=bbb&defaultContentTypes=text%2Fjson" />
-        <meta name="webappfind" content="executableName=anExecName&mode=edit&executablePath=some%2Fpath%2F&binary=on&site=http%3A%2F%2Fexample.com" />
-        <meta name="webappfind" content="executableName=anotherExecName&args={&quot;a&quot;:&quot;%26&quot;}"/>
-        <meta name="webappfind" content="executableName=Edit%20HTML&mode=edit&extensions=html&defaultExtensions=html&contentTypes=public.html&defaultContentTypes=public.html&site=http%3A%2F%2Fbrett-zamir.me/webappfind/demos/html.html&id=me.brett-zamir.edithtml" />
-
         <title>Executable Builder demo</title>
+        <script type="module">
+        import {addMetas} from './meta-webappfind.js';
+        addMetas([
+          {
+            executableName: 'Edit HTML',
+            mode: 'edit',
+            extensions: 'html',
+            defaultExtensions: 'html',
+            contentTypes: 'public.html',
+            defaultContentTypes: 'public.html',
+            site: 'http://brett-zamir.me/webappfind/demos/html.html&id=me.brett-zamir.edithtml'
+          },
+          {
+            executableName: 'Edit SVG',
+            mode: 'edit',
+            extensions: 'svg',
+            defaultExtensions: 'svg',
+            contentTypes: 'public.svg-image',
+            defaultContentType: 'public.svg-image',
+            site: 'http://localhost:8005/node_modules/svgedit/editor/svg-editor-es.html?extensions=ext-webappfind.js',
+          }
+          /*
+          {
+            mode: 'view',
+            file: 'aFile1.js',
+            id: 'anID1',
+            extensions: ['aaa', 'bbb', 'ccc'],
+            contentTypes: ['text/plain', 'text/json']
+          },
+          {
+            mode: 'edit',
+            file: 'aFile2.js',
+            id: 'anID2',
+            extensions: ['aaa' 'bbb' 'ccc'],
+            contentTypes: ['text/plain', 'text/json'],
+            defaultExtensions: 'bbb',
+            defaultContentTypes: 'text/json'
+          },
+          {
+            executableName: 'anExecName',
+            mode: 'edit',
+            executablePath: 'some/path/'
+            binary: 'on',
+            site: 'http://example.com'
+          },
+          {
+            executableName: 'anotherExecName',
+            args: {a: '&'}
+          }
+          */
+        ]);
+        </script>
     </head>
     <body>
         This document contains some executable builder <code>meta</code>
