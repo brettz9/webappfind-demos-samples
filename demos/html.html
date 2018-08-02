@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8" />
     <title>WebAppFind HTML editor demo</title>
-    <script src="../node_modules/jamilih/jml.js"></script>
     <script src="ckeditor/ckeditor.js"></script>
     <script src="ckeditor/samples/assets/uilanguages/languages.js"></script>
     <script src="register.js"></script>
@@ -24,9 +23,9 @@
             </div>
         </form>
     </div>
-<script>
-/*globals jml, CKEDITOR */
-(function () {'use strict';
+<script type="module">
+/*globals CKEDITOR */
+import jml from '../node_modules/jamilih/dist/jml-es.js';
 
 let editor, backgroundColor,
 // Could pass option 'readOnly' if determine from protocol that this is view mode only
@@ -52,28 +51,27 @@ function listenForMessages() {
             return;
         }
         switch (type) {
-            case 'view':
-                // Populate the contents
-                document.title += ': ' + pathID;
-                editor.setData(content);
-                if ($('a.cke_button__save')) {
-                    $('a.cke_button__save').disabled = false;
-                }
-                break;
-            case 'save-end':
-                setTimeout(function () {
-                    $('a.cke_button__save').style.backgroundColor = backgroundColor;
-                }, 300);
-                // alert('save complete for pathID ' + pathID + '!');
-                break;
-            default:
-                throw new Error('Unexpected WebAppFind event type: ' + type);
+        case 'view':
+            // Populate the contents
+            document.title += ': ' + pathID;
+            editor.setData(content);
+            if ($('a.cke_button__save')) {
+                $('a.cke_button__save').disabled = false;
+            }
+            break;
+        case 'save-end':
+            setTimeout(function () {
+                $('a.cke_button__save').style.backgroundColor = backgroundColor;
+            }, 300);
+            // alert('save complete for pathID ' + pathID + '!');
+            break;
+        default:
+            throw new Error('Unexpected WebAppFind event type: ' + type);
         }
     });
 }
 
-
-function createEditor(languageCode) {
+function createEditor (languageCode) {
     if (editor) {
         editor.destroy();
     }
@@ -83,7 +81,7 @@ function createEditor(languageCode) {
     editor = CKEDITOR.replace('editor1', {
         language: languageCode,
         on: {
-            instanceReady: function() {
+            instanceReady () {
                 // Wait for the editor to be ready to set
                 // the language combo.
                 editor.execCommand('maximize'); // Full screen mode
@@ -177,7 +175,6 @@ window.addEventListener('DOMContentLoaded', function () {
     }], 'http://127.0.0.1/webappfind/demos/html.html?uri=%s');
 });
 */
-}());
 
 </script>
 </body>

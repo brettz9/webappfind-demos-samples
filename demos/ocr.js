@@ -6,16 +6,13 @@ Todos:
 1. Detect from the decoded URL "params" JSON object's fileType whether a PDF, image, or SVG has been opened and act accordingly in order to OCR.
 */
 
-(function () {'use strict';
-
 function $ (sel) {
     return document.querySelector(sel);
 }
 
-var pdfObj, canvas, context, initial, endValue, ocrEngine,
-    saveMessage = 'webapp-save',
+let pdfObj, canvas, context, initial, endValue, ocrEngine,
+    saveMessage = 'save',
     excludedMessages = [saveMessage];
-
 
 function getPDF (pgNum) {
     // Using promise to fetch the page
@@ -93,53 +90,49 @@ function setPDF (doc) {
   });
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-    
-    $('#pdfFile').addEventListener('change', function (ev) {
-    
-        var f = ev.target.files[0];
-        
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var arrayBuffer = e.target.result;
-            var array = new Uint8Array(arrayBuffer);
-            setPDF(array);
-        };
-        reader.readAsArrayBuffer(f);
-    });
-    
-    
-    var pathID;
-    
-    window.addEventListener('message', function(e) {
-        if (e.origin !== window.location.origin || // PRIVACY AND SECURITY! (for viewing and saving, respectively)
-            (!Array.isArray(e.data) || excludedMessages.indexOf(e.data[0]) > -1) // Validate format and avoid our post below
+$('#pdfFile').addEventListener('change', function (ev) {
+
+    var f = ev.target.files[0];
+
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        var arrayBuffer = e.target.result;
+        var array = new Uint8Array(arrayBuffer);
+        setPDF(array);
+    };
+    reader.readAsArrayBuffer(f);
+});
+
+let pathID;
+window.addEventListener('message', function ({data, origin}) {
+    let type, content;
+    try {
+        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+            excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
         ) {
             return;
         }
-        var messageType = e.data[0];
-        switch (messageType) {
-            case 'webapp-view':
-                // Populate the contents
-                pathID = e.data[1];
-                var i;
-                var raw = e.data[2];
-                var rawLength = raw.length;
-                var array = new Uint8Array(new ArrayBuffer(rawLength));
-                for (i = 0; i < rawLength; i++) {
-                    array[i] = raw.charCodeAt(i);
-                }
-                setPDF(array);
-                // $('#save').disabled = false;
-                break;
-            // Todo: We could allow raw editing of the PDF until such time as WYSIWYG editing becomes possible
-            // case 'webapp-save-end':
-                // alert('save complete for pathID ' + e.data[1] + '!');
-                // break;
-            default:
-                throw 'Unexpected mode';
+    } catch (err) {
+        return;
+    }
+    switch (type) {
+    case 'view':
+        // Populate the contents
+        const raw = content;
+        const rawLength = raw.length;
+        const array = new Uint8Array(new ArrayBuffer(rawLength));
+        for (let i = 0; i < rawLength; i++) {
+            array[i] = raw.charCodeAt(i);
         }
-    }, false);
+        setPDF(array);
+        // $('#save').disabled = false;
+        break;
+    // Todo: We could allow raw editing of the PDF until such time as WYSIWYG editing becomes possible
+    // case 'save-end':
+        // alert(`save complete for pathID ${pathID}!`);
+        // break;
+    default:
+        throw 'Unexpected mode: ' + type;
+    }
 });
-
-}());

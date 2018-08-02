@@ -18,6 +18,8 @@
   ],
   "author": "Brett Zamir",
   "dependencies": {
+    "asm.js-lint": "^0.1.3",
+    "jamilih": "^0.35.0",
     "node-static": "^0.7.10",
     "opn-cli": "^3.1.0",
     "svgedit": "^3.0.0-rc.2"

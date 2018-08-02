@@ -193,72 +193,76 @@ Blockly.inject(
     }
 );
 
-(function () {'use strict';
-
-var saveMessage = 'webapp-save',
+let pathID,
+    saveMessage = 'save',
     excludedMessages = [saveMessage];
 
 function $ (sel) {
     return document.querySelector(sel);
 }
 
-window.addEventListener('DOMContentLoaded', function () {
-    var pathID;
-
-    window.addEventListener('message', function(e) {
-        if (e.origin !== window.location.origin || // PRIVACY AND SECURITY! (for viewing and saving, respectively)
-            (!Array.isArray(e.data) || excludedMessages.indexOf(e.data[0]) > -1) // Validate format and avoid our post below
+window.addEventListener('message', function ({data, origin}) {
+    let type, content;
+    try {
+        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+            excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
         ) {
             return;
         }
-        var xml, xml_text,
-            messageType = e.data[0];
-        switch (messageType) {
-            case 'webapp-view':
-                // Populate the contents
-                pathID = e.data[1];
-                try {
-                    xml_text = e.data[2];
-                    xml = Blockly.Xml.textToDom(xml_text);
-                    Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
-                }
-                finally {
-                    $('#save').disabled = false;
-                }
-                break;
-            case 'webapp-save-end':
-                alert('save complete for pathID ' + e.data[1] + '!');
-                break;
-            default:
-                throw 'Unexpected mode';
-        }
-    }, false);
+    } catch (err) {
+        return;
+    }
 
-    $('#save').addEventListener('click', function () {
-        if (!pathID) {
-            alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
-            return;
+    var xml;
+    switch (type) {
+    case 'view':
+        // Populate the contents
+        try {
+            xml = Blockly.Xml.textToDom(content);
+            Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
         }
-        var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace),
-            xml_text = Blockly.Xml.domToText(xml);
+        finally {
+            $('#save').disabled = false;
+        }
+        break;
+    case 'save-end':
+        alert(`save complete for pathID ${pathID}!`);
+        break;
+    default:
+        throw 'Unexpected mode: ' + type;
+    }
+});
 
-        window.postMessage([saveMessage, pathID, xml_text], window.location.origin);
-    });
+$('#save').addEventListener('click', function () {
+    if (!pathID) {
+        alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
+        return;
+    }
+    var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace),
+        content = Blockly.Xml.domToText(xml);
+
+    window.postMessage({
+        webappfind: {
+            type: saveMessage,
+            pathID,
+            content
+        }
+    }, location.origin);
+});
 
 /*
 var xml_text = '<xml xmlns="http://www.w3.org/1999/xhtml"><block type="controls_if" inline="false" x="255" y="32"></block></xml>',
-    xml = Blockly.Xml.textToDom(xml_text);
+xml = Blockly.Xml.textToDom(xml_text);
 Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
 */
 
 /*
-    addRegistrationHandlers([{
-        type: 'editblockly', info: 'Protocol for viewing local Blockly files',
-        instructions: 'Register this app as a handler for viewing local Blockly files'
-    }], 'http://127.0.0.1/webappfind/demos/blockly.html?uri=%s');
+addRegistrationHandlers([{
+    type: 'editblockly', info: 'Protocol for viewing local Blockly files',
+    instructions: 'Register this app as a handler for viewing local Blockly files'
+}], 'http://127.0.0.1/webappfind/demos/blockly.html?uri=%s');
 */
-});
-
 
 /*
 setTimeout(function () {
@@ -267,9 +271,6 @@ setTimeout(function () {
     alert(xml_text);
 }, 5000);
 */
-
-}());
-
 
 </script>
 </body>

@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8" />
     <title>WebAppFind CSV editor demo</title>
-    <script src="../node_modules/jamilih/jml.js"></script>
     <script src="ckeditor/ckeditor.js"></script>
     <script src="ckeditor/samples/assets/uilanguages/languages.js"></script>
     <script>
@@ -29,51 +28,55 @@
             </div>
         </form>
     </div>
-<script>
-/*globals jml, CKEDITOR */
-(function () {'use strict';
+<script type="module">
+/*globals CKEDITOR */
+import jml from '../node_modules/jamilih/dist/jml-es.js';
 var i, editor, languages, backgroundColor,
     // Could pass option 'readOnly' if determine from protocol that this is view mode only
     pathID,
-    saveMessage = 'webapp-save',
+    saveMessage = 'save',
     excludedMessages = [saveMessage];
 
 function listenForMessages() {
-    window.addEventListener('message', function(e) {
-        if (e.origin !== window.location.origin || // PRIVACY AND SECURITY! (for viewing and saving, respectively)
-            (!Array.isArray(e.data) || excludedMessages.indexOf(e.data[0]) > -1) // Validate format and avoid our post below
-        ) {
+    window.addEventListener('message', function ({data, origin}) {
+        let type, content;
+        try {
+            ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+            if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+                excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
+            ) {
+                return;
+            }
+        } catch (err) {
             return;
         }
-        var messageType = e.data[0];
-        switch (messageType) {
-            case 'webapp-view':
-                // Populate the contents
-                pathID = e.data[1];
-                document.title += ': ' + pathID;
-                editor.setData('<table border="1">' + e.data[2].split(/\r?\n/).map(function (line) {
-                    if (line.length) {
-                        // Does not work when newlines exist within a cell
-                        return '<tr><td>' + $.csv.toArray(line).join('</td><td>') + '</td></tr>';
-                    }
-                    return '';
-                }).join('') + '</table>');
-                if ($('a.cke_button__save')) {
-                    $('a.cke_button__save').disabled = false;
+        switch (type) {
+        case 'view':
+            // Populate the contents
+            document.title += ': ' + pathID;
+            editor.setData('<table border="1">' + content.split(/\r?\n/).map(function (line) {
+                if (line.length) {
+                    // Does not work when newlines exist within a cell
+                    return '<tr><td>' + $.csv.toArray(line).join('</td><td>') + '</td></tr>';
                 }
-                break;
-            case 'webapp-save-end':
-                $('a.cke_button__save').style.backgroundColor = 'blue';
-                setTimeout(function () {
-                    $('a.cke_button__save').style.backgroundColor = backgroundColor;
-                }, 120);
-                
-                // alert('save complete for pathID ' + e.data[1] + '!');
-                break;
-            default:
-                throw 'Unexpected mode';
+                return '';
+            }).join('') + '</table>');
+            if ($('a.cke_button__save')) {
+                $('a.cke_button__save').disabled = false;
+            }
+            break;
+        case 'save-end':
+            $('a.cke_button__save').style.backgroundColor = 'blue';
+            setTimeout(function () {
+                $('a.cke_button__save').style.backgroundColor = backgroundColor;
+            }, 120);
+
+            // alert(`save complete for pathID ${pathID}!`);
+            break;
+        default:
+            throw 'Unexpected mode: ' + type;
         }
-    }, false);
+    });
 }
 
 
@@ -107,7 +110,7 @@ function createEditor(languageCode) {
                 });
                 editor.ui.addButton('Save', { label: 'Save', command: 'save' });
                 */
-                
+
                 editor.on('beforeCommandExec', function (e) {
                     if (e.data.name === 'save') {
                         throw '';
@@ -122,7 +125,7 @@ function createEditor(languageCode) {
                         alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
                         return;
                     }
-                    
+
                     var csv = [].slice.call(
                         new DOMParser().parseFromString(editor.getData(), 'text/html').documentElement.querySelectorAll('table tr')
                     ).map(function (tr) {
@@ -133,10 +136,16 @@ function createEditor(languageCode) {
                             return td.innerHTML;
                         }).join(',');
                     }).join('\n') + '\n';
-                    window.postMessage([saveMessage, pathID, csv], window.location.origin);
+                    window.postMessage({
+                        webappfind: {
+                            type: saveMessage,
+                            pathID,
+                            content: csv
+                        }
+                    }, location.origin);
                 }
                 $('a.cke_button__save').addEventListener('click', saveToDisk);
-                
+
                 editor.document.on('keydown', function (e) {
                     if (e.data.$.keyCode == 83 && e.data.$.ctrlKey) {
                         e.data.$.preventDefault(true);
@@ -149,7 +158,7 @@ function createEditor(languageCode) {
     });
 }
 
-listenForMessages(); 
+listenForMessages();
 languages = $('#languages');
 for (i = 0; i < window.CKEDITOR_LANGS.length ; i++ ) {
     jml('option', {value: window.CKEDITOR_LANGS[i].code}, [
@@ -175,7 +184,6 @@ window.addEventListener('DOMContentLoaded', function () {
     }], 'http://127.0.0.1/webappfind/demos/csv.html?uri=%s');
 });
 */
-}());
 
 </script>
 </body>

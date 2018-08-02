@@ -7,41 +7,43 @@
 </head>
 <body>
 <img />
-<script>
+<script type="module">
 /*globals btoa */
-(function () {'use strict';
 
-var pathID,
-    saveMessage = 'webapp-save',
+let pathID,
+    saveMessage = 'save',
     excludedMessages = [saveMessage],
     img = document.querySelector('img'),
     imageType = 'jpeg';
 
 document.title = 'WebAppFind ' + imageType.toUpperCase() + ' viewer';
 
-window.addEventListener('message', function(e) {
-    if (e.origin !== window.location.origin || // PRIVACY AND SECURITY! (for viewing and saving, respectively)
-        (!Array.isArray(e.data) || excludedMessages.indexOf(e.data[0]) > -1) // Validate format and avoid a post below
-    ) {
+window.addEventListener('message', function ({data, origin}) {
+    let type, content;
+    try {
+        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+            excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
+        ) {
+            return;
+        }
+    } catch (err) {
         return;
     }
-    var messageType = e.data[0];
-    switch (messageType) {
-        case 'webapp-view':
-            // Populate the contents
-            pathID = e.data[1];
-            img.src = 'data:image/' + imageType + ';base64,' + btoa(e.data[2]); // Converts binary string to base64
-            // $('#save').disabled = false;
-            break;
-        /*case 'webapp-save-end':
-            alert('save complete for pathID ' + e.data[1] + '!');
-            break;*/
-        default:
-            throw 'Unexpected mode' + messageType;
+    switch (type) {
+    case 'view':
+        // Populate the contents
+        img.src = 'data:image/' + imageType + ';base64,' + btoa(content); // Converts binary string to base64
+        // $('#save').disabled = false;
+        break;
+    /* case 'save-end':
+        alert(`save complete for pathID ${pathID}!`);
+        break; */
+    default:
+        throw 'Unexpected mode: ' + type;
     }
-}, false);
+});
 
-}());
 </script>
 </body>
 </html>

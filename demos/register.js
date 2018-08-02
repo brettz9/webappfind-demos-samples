@@ -11,7 +11,7 @@ function addRegistrationHandlers (arr, url) {
         var button = document.createElement('button');
         button.id = method.type;
         button.style.margin = '7px';
-        button.appendChild(document.createTextNode(method.instructions));
+        button.append(method.instructions);
         button.addEventListener('click', function (e) {
             try {
                 navigator.registerProtocolHandler(

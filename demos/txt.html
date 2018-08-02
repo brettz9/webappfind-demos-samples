@@ -6,35 +6,32 @@
     <!-- WebAppFind -->
     <link href="javascript.css" rel="stylesheet" />
     <script src="register.js"></script>
-    <script src="webappfind.js"></script>
-    <script>
-/*globals WebAppFind*/
+    <script type="module">
+
+import WebAppFind from './webappfind.js';
 /*
 TODOS:
 1. We could allow separate tabs when new pathIDs are obtained via our message listener
 */
-(function () {'use strict';
 
 function $ (sel) {
     return document.querySelector(sel);
 }
 
 var waf = new WebAppFind({
-    view: function (content) {
+    view (content) {
         $('#text').value = content;
         $('#save').disabled = false;
     },
-    saveEnd: function (pathID) {
+    saveEnd (pathID) {
         alert('save complete for pathID ' + pathID + '!');
     }
 });
 
-window.addEventListener('DOMContentLoaded', function () {
-    $('#save').addEventListener('click', function () {
-        waf.save($('#text').value);
-    });
+$('#save').addEventListener('click', function () {
+    waf.save($('#text').value);
 });
-    
+
 /*
     addRegistrationHandlers([{
         type: 'edittxt', info: 'Protocol for viewing local TXT files',
@@ -42,7 +39,6 @@ window.addEventListener('DOMContentLoaded', function () {
     }], 'http://127.0.0.1/webappfind/demos/txt.html?uri=%s');
 */
 
-}());
     </script>
 </head>
 <body>

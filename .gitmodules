@@ -1,0 +1,3 @@
+[submodule "demos/CodeMirror"]
+	path = demos/CodeMirror
+	url = https://github.com/components/codemirror/
