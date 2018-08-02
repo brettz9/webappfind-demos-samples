@@ -5,7 +5,7 @@
 * @typedef {null|boolean|string|module:MetaWebAppFind.JSON[]|PlainObject.<string, module:MetaWebAppFind.JSON>} module:MetaWebAppFind.JSON
 */
 /**
-* @typedef {PlainObject.<string, string|string[]|module:MetaWebAppFind.JSON>} module:MetaWebAppFind.Params
+* @typedef {PlainObject.<string, boolean|string|string[]|module:MetaWebAppFind.JSON>} module:MetaWebAppFind.Params
 */
 
 /**
@@ -18,7 +18,12 @@ export function serializeParams (params) {
       value = value.join(' ');
     } else if (value && typeof value === 'object') {
       value = JSON.stringify(value);
-    }
+  } else if (typeof value === 'boolean') {
+      if (!value) {
+          return s;
+      }
+      value = 'on';
+  }
     return `${s}&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
   }, '').slice(1);
 }
@@ -36,6 +41,9 @@ export function addMetas (metaInfos) {
       document.head.appendChild(meta);
     });
 }
+
+// For content types, find type, e.g. for CSS:
+// defaults read /System/Library/CoreServices/CoreTypes.bundle/Contents/Info.plist | grep css
 
 /*
 {
@@ -58,7 +66,7 @@ export function addMetas (metaInfos) {
   executableName: 'anExecName',
   mode: 'edit',
   executablePath: 'some/path/'
-  binary: 'on',
+  binary: true,
   site: 'http://example.com'
 },
 {
