@@ -5,11 +5,6 @@
     <title>WebAppFind CSV editor demo</title>
     <script src="ckeditor/ckeditor.js"></script>
     <script src="ckeditor/samples/assets/uilanguages/languages.js"></script>
-    <script>
-    function $ (sel) {
-        return document.querySelector(sel);
-    }
-    </script>
     <script src="jquery.csv.js"></script>
     <link rel="stylesheet" href="ckeditor/samples/sample.css" />
     <link rel="stylesheet" href="html.css" />
@@ -29,7 +24,12 @@
         </form>
     </div>
 <script type="module">
-/*globals CKEDITOR */
+/*globals $, CKEDITOR */
+const jQuery = $;
+$ = (sel) => { // For jquery.csv.js
+    return document.querySelector(sel);
+};
+
 import jml from '../node_modules/jamilih/dist/jml-es.js';
 var i, editor, languages, backgroundColor,
     // Could pass option 'readOnly' if determine from protocol that this is view mode only
@@ -57,7 +57,7 @@ function listenForMessages() {
             editor.setData('<table border="1">' + content.split(/\r?\n/).map(function (line) {
                 if (line.length) {
                     // Does not work when newlines exist within a cell
-                    return '<tr><td>' + $.csv.toArray(line).join('</td><td>') + '</td></tr>';
+                    return '<tr><td>' + jQuery.csv.toArray(line).join('</td><td>') + '</td></tr>';
                 }
                 return '';
             }).join('') + '</table>');
@@ -66,10 +66,9 @@ function listenForMessages() {
             }
             break;
         case 'save-end':
-            $('a.cke_button__save').style.backgroundColor = 'blue';
             setTimeout(function () {
                 $('a.cke_button__save').style.backgroundColor = backgroundColor;
-            }, 120);
+            }, 300);
 
             // alert(`save complete for pathID ${pathID}!`);
             break;
@@ -90,7 +89,7 @@ function createEditor(languageCode) {
     editor = CKEDITOR.replace('editor1', {
         language: languageCode,
         on: {
-            instanceReady: function() {
+            instanceReady () {
                 // Wait for the editor to be ready to set
                 // the language combo.
                 editor.execCommand('maximize'); // Full screen mode
@@ -126,16 +125,17 @@ function createEditor(languageCode) {
                         return;
                     }
 
-                    var csv = [].slice.call(
+                    var csv = [...(
                         new DOMParser().parseFromString(editor.getData(), 'text/html').documentElement.querySelectorAll('table tr')
-                    ).map(function (tr) {
-                        return [].slice.call(tr.querySelectorAll('td')).map(function (td) {
+                    )].map(function (tr) {
+                        return [...(tr.querySelectorAll('td'))].map(function (td) {
                             if (td.innerHTML.search(/[\n\r,"]/) > -1) {
                                 return '"' + td.innerHTML.replace(/"/g, '""') + '"';
                             }
                             return td.innerHTML;
                         }).join(',');
                     }).join('\n') + '\n';
+                    $('a.cke_button__save').style.backgroundColor = 'blue';
                     window.postMessage({
                         webappfind: {
                             type: saveMessage,
