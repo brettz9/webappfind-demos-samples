@@ -35,7 +35,7 @@ window.addEventListener('message', function ({data, origin}) {
     case 'view':
         // Populate the contents
         const encoded = base64js.fromByteArray(content.data);
-        img.src = 'data:image/' + imageType + ';base64,' + encoded; // Converts binary string to base64
+        img.src = 'data:image/' + imageType + ';base64,' + encoded;
         // $('#save').disabled = false;
         break;
     /* case 'save-end':

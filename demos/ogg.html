@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>WebAppFind Ogg audio player</title>
+    <script src="../node_modules/base64-js/base64js.min.js"></script>
 </head>
 <body>
 <audio controls=""></audio>
@@ -29,7 +30,8 @@ window.addEventListener('message', function ({data, origin}) {
     switch (type) {
     case 'view':
         // Populate the contents
-        audio.src = 'data:audio/ogg;base64,' + btoa(content); // Converts binary string to base64
+        const encoded = base64js.fromByteArray(content.data);
+        audio.src = 'data:audio/ogg;base64,' + encoded;
         audio.play();
         // $('#save').disabled = false;
         break;

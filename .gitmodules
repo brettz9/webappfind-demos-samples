@@ -1,3 +1,6 @@
 [submodule "demos/CodeMirror"]
 	path = demos/CodeMirror
 	url = https://github.com/components/codemirror/
+[submodule "demos/pdf.js"]
+	path = demos/pdf.js
+	url = git@github.com:mozilla/pdf.js.git

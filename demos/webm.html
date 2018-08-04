@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <title>WebAppFind WebM viewer demo</title>
+    <script src="../node_modules/base64-js/base64js.min.js"></script>
 </head>
 <body>
 <video controls=""></video>
 <script type="module">
-/*globals btoa */
+/*globals btoa, base64js */
 
 let pathID,
     saveMessage = 'save',
@@ -29,7 +30,8 @@ window.addEventListener('message', function ({data, origin}) {
     switch (type) {
     case 'view':
         // Populate the contents
-        video.src = 'data:video/webm;base64,' + btoa(content); // Converts binary string to base64
+        const encoded = base64js.fromByteArray(content.data);
+        video.src = 'data:video/webm;base64,' + encoded;
         video.play();
         // $('#save').disabled = false;
         break;

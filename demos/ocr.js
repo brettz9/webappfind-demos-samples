@@ -119,13 +119,14 @@ window.addEventListener('message', function ({data, origin}) {
     switch (type) {
     case 'view':
         // Populate the contents
+        /*
         const raw = content;
         const rawLength = raw.length;
         const array = new Uint8Array(new ArrayBuffer(rawLength));
         for (let i = 0; i < rawLength; i++) {
             array[i] = raw.charCodeAt(i);
-        }
-        setPDF(array);
+        } */
+        setPDF({data: content.data});
         // $('#save').disabled = false;
         break;
     // Todo: We could allow raw editing of the PDF until such time as WYSIWYG editing becomes possible

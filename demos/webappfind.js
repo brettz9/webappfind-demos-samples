@@ -7,9 +7,6 @@ class WebAppFind {
     constructor (messageHandlers, options) {
         messageHandlers = messageHandlers || {};
         options = options || {};
-        if (!(this instanceof WebAppFind)) {
-            return new WebAppFind();
-        }
         this.view = messageHandlers.view; // Accepts as arguments: content, pathID
         this.saveEnd = messageHandlers.saveEnd;
         this.excludedMessages = options.excludedMessages || ['save'];
@@ -19,8 +16,7 @@ class WebAppFind {
     init () {
         if (!document.body) {
             window.addEventListener('DOMContentLoaded', this.addListeners.bind(this));
-        }
-        else {
+        } else {
             this.addListeners();
         }
     }
@@ -29,7 +25,7 @@ class WebAppFind {
         var that = this;
         window.addEventListener('message', function ({data, origin}) {
             // Could allow config to loosen for whitelisted sites
-            let type, content;
+            let type, content, pathID;
             try {
                 ({type, pathID, content} = data.webappfind); // May throw if data is not an object
                 if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
@@ -39,6 +35,7 @@ class WebAppFind {
                 }
                 Object.assign(that, {type, pathID, content});
             } catch (err) {
+                console.log('err', err);
                 return;
             }
             switch (type) {
