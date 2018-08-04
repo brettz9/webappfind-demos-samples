@@ -4,11 +4,12 @@
     <meta charset="utf-8" />
     <title>View PNG</title>
     <style>img {width:100%;}</style>
+    <script src="../node_modules/base64-js/base64js.min.js"></script>
 </head>
 <body>
 <img />
 <script type="module">
-/* globals btoa */
+/* globals btoa, base64js */
 
 let pathID,
     saveMessage = 'save',
@@ -33,7 +34,8 @@ window.addEventListener('message', function ({data, origin}) {
     switch (type) {
     case 'view':
         // Populate the contents
-        img.src = 'data:image/' + imageType + ';base64,' + btoa(content); // Converts binary string to base64
+        const encoded = base64js.fromByteArray(content.data);
+        img.src = 'data:image/' + imageType + ';base64,' + encoded; // Converts binary string to base64
         // $('#save').disabled = false;
         break;
     /* case 'save-end':

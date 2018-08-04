@@ -5,6 +5,7 @@
     <title>PNG Edit</title>
     <script src="fabric.min.js"></script>
     <link rel="stylesheet" href="png-edit.css" />
+    <script src="../node_modules/base64-js/base64js.min.js"></script>
     <style>
     #dimensions label {
         padding-left: 30px;
@@ -233,7 +234,7 @@ if (canvas.freeDrawingBrush) {
 <script type="module">
 // WebAppFind script....
 
-/* globals btoa */
+/* globals btoa, base64js */
 
 let pathID,
     saveMessage = 'save',
@@ -262,7 +263,8 @@ window.addEventListener('message', function ({data, origin}) {
     switch (type) {
     case 'view':
         // Populate the contents
-        dataURL = 'data:image/' + imageType + ';base64,' + btoa(content); // Converts binary string to base64
+        const encoded = base64js.fromByteArray(content.data);
+        dataURL = 'data:image/' + imageType + ';base64,' + encoded; // Converts binary string to base64
         img.src = dataURL;
         img.crossOrigin = 'Anonymous'; // Note that this and the following were added during testing to overcome a security issue despite these being our own data URL strings! (And despite it having worked for one such image but not another!) Although I can't replicate the error now, I'm keeping these here in case it prevents problems.
         img.onload = function () {
