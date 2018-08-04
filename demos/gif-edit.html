@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>GIF Edit</title>
     <script src="fabric.min.js"></script>
+    <script src="../node_modules/base64-js/base64js.min.js"></script>
     <link rel="stylesheet" href="png-edit.css" />
     <style>
     #dimensions label {
@@ -233,7 +234,7 @@ if (canvas.freeDrawingBrush) {
 <script type="module">
 // WebAppFind script....
 
-/*globals btoa */
+/*globals btoa, base64js */
 let pathID,
     saveMessage = 'save',
     excludedMessages = [saveMessage],
@@ -262,7 +263,8 @@ window.addEventListener('message', function ({data, origin}) {
     switch (type) {
     case 'view':
         // Populate the contents
-        dataURL = 'data:image/' + imageType + ';base64,' + btoa(content); // Converts binary string to base64
+        const encoded = base64js.fromByteArray(content.data);
+        dataURL = 'data:image/' + imageType + ';base64,' + encoded;
         img.src = dataURL;
         img.crossOrigin = 'Anonymous'; // Note that this and the following were added during testing to overcome a security issue despite these being our own data URL strings! (And despite it having worked for one such image but not another!) Although I can't replicate the error now, I'm keeping these here in case it prevents problems.
         img.onload = function () {
@@ -291,7 +293,10 @@ $('#save').addEventListener('click', function () {
         alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
         return;
     }
-    var bin = window.atob(canvas.toDataURL({format: 'png'}).replace(new RegExp('data:image/png;base64,', ''), ''));
+    const encoded = canvas.toDataURL({format: 'png'}).replace(new RegExp('data:image/png;base64,', ''), '');
+    const bytes = base64js.toByteArray(encoded);
+    const bin = new TextDecoder('utf-8').decode(bytes);
+    console.log('bin', encoded, typeof bytes, 'bbb', bin);
     window.postMessage({
         webappfind: {
             type: saveMessage,
