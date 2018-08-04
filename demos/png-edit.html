@@ -293,7 +293,7 @@ $('#save').addEventListener('click', function () {
         alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
         return;
     }
-    const encoded = canvas.toDataURL({format: 'png'}).replace(new RegExp('data:image/png;base64,', ''), '');
+    const encoded = canvas.toDataURL().replace(new RegExp('data:image/png;base64,', ''), '');
     const bytes = base64js.toByteArray(encoded);
     window.postMessage({
         webappfind: {

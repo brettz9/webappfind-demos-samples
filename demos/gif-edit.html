@@ -293,15 +293,18 @@ $('#save').addEventListener('click', function () {
         alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
         return;
     }
-    const encoded = canvas.toDataURL({format: 'png'}).replace(new RegExp('data:image/png;base64,', ''), '');
+    let encoded = canvas.toDataURL('image/gif');
+    if (encoded.startsWith('data:image/gif')) {
+        encoded = encoded.replace(new RegExp('data:image/gif;base64,', ''), '');
+    } else {
+        encoded = encoded.replace(new RegExp('data:image/png;base64,', ''), '');
+    }
     const bytes = base64js.toByteArray(encoded);
-    const bin = new TextDecoder('utf-8').decode(bytes);
-    console.log('bin', encoded, typeof bytes, 'bbb', bin);
     window.postMessage({
         webappfind: {
             type: saveMessage,
             pathID,
-            content: bin
+            content: bytes
         }
     }, location.origin);
 });
