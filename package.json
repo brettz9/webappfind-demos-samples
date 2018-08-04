@@ -1,6 +1,6 @@
 {
   "name": "webappfind-demos-samples",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Demos and sample files for exploring WebAppFind open web apps from desktop functionality",
   "scripts": {
     "open": "opn http://localhost:8005/node_modules/svgedit/editor/svg-editor-es.html?extensions=ext-webappfind.js",
