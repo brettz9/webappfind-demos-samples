@@ -18,7 +18,7 @@ function $ (sel) {
     return document.querySelector(sel);
 }
 
-var waf = new WebAppFind({
+const waf = new WebAppFind({
     view (content) {
         $('#text').value = content;
         $('#save').disabled = false;
