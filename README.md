@@ -191,4 +191,9 @@ dependencies such as Jamilih.)
             WebAppFind/AsYouWish (or just WebAppFind if directory
             functionality added) and the SendTo batch file). Also ensure
             demos with files and folders together.
- 1. Adapt the webappfind.js utility class to reduce demo code (and allow better forward compatibility with any API changes).
+1. webappfind.js
+    1. Adapt the webappfind.js utility class to reduce demo code (and
+        allow better forward compatibility with any API changes).
+    1. Document
+1. meta-webappfind.js
+    1. Document
