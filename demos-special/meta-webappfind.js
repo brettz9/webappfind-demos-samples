@@ -1,11 +1,12 @@
 /**
-* @typedef {object} PlainObject
-*/
+ * @external JSONObject
+ * @type {object}
+ */
+ /**
+ * @typedef {object} PlainObject
+ */
 /**
-* @typedef {null|boolean|string|module:MetaWebAppFind.JSON[]|PlainObject.<string, module:MetaWebAppFind.JSON>} module:MetaWebAppFind.JSON
-*/
-/**
-* @typedef {PlainObject.<string, boolean|string|string[]|module:MetaWebAppFind.JSON>} module:MetaWebAppFind.Params
+* @typedef {PlainObject.<string, boolean|string|string[]|external:JSONObject>} module:MetaWebAppFind.Params
 */
 
 /**
@@ -34,12 +35,12 @@ export function serializeParams (params) {
  */
 export function addMetas (metaInfos) {
     metaInfos = Array.isArray(metaInfos) ? metaInfos : [metaInfos];
-    metaInfos.forEach((params) => {
+    document.head.append(...metaInfos.map((params) => {
       const meta = document.createElement('meta');
       meta.name = 'webappfind';
       meta.content = serializeParams(params);
-      document.head.appendChild(meta);
-    });
+      return meta;
+    }));
 }
 
 // For content types, find type, e.g. for CSS:

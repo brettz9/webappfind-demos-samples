@@ -16,6 +16,41 @@ with some extra development work (pull requests welcome).
 version of Firefox and was Windows only. It is also missing some
 dependencies such as Jamilih.)
 
+## Utility APIs
+
+webappfind-demos-samples currently bundles two utilities.
+
+### meta-webappfind.js
+
+In order to provide suggested file extension and content type associations for
+ExecutableBuilder, one's HTML must include `<meta name="webappfind">` tags in
+the head of the document with the `content` attribute properly formatted. To
+assist in this formatting, the utility `meta-webappfind.js` is provided.
+
+#### `addMetas(metaInfos)`
+
+If an array is not provided for `metaInfos`, the argument will be encapsulated
+into an array.
+
+The items in the provided (or resulting) array will adhere to the structure
+of `params` described under `serializeParams`.
+
+The serialized values will be added as the `content` of a `<meta name="webappfind">`
+element and this element will be added to the document head.
+
+#### `serializeParams(params)`
+
+`params` is expected to be a plain object with any of the following types for
+key values, and behaving as follows:
+
+- Booleans: Adds "on" if `true`, and does not add any `meta` element if `false`
+- String: Adds the literal string
+- Array of strings: Adds the literal value of joining the strings together with a space
+- JSON object: A JSON object that will be run against `JSON.stringify`
+- Any other value types will be converted to a string by `encodeURIComponent`.
+
+### webappfind.js
+
 ## To-dos
 
 1. Add TestCafe tests for demos (need to also call executables for simulating

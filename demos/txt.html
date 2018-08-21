@@ -19,7 +19,7 @@ function $ (sel) {
 }
 
 const waf = new WebAppFind({
-    view (content) {
+    view ({content}) {
         $('#text').value = content;
         $('#save').disabled = false;
     },
