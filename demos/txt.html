@@ -22,14 +22,13 @@ const waf = new WebAppFind({
     view ({content}) {
         $('#text').value = content;
         $('#save').disabled = false;
-    },
-    saveEnd (pathID) {
-        alert('save complete for pathID ' + pathID + '!');
     }
 });
 
 $('#save').addEventListener('click', function () {
-    waf.save($('#text').value);
+    waf.save($('#text').value).then(({pathID}) => {
+        alert('save complete for pathID ' + pathID + '!');
+    });
 });
 
 /*
