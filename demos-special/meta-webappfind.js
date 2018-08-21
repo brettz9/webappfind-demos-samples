@@ -18,12 +18,12 @@ export function serializeParams (params) {
       value = value.join(' ');
     } else if (value && typeof value === 'object') {
       value = JSON.stringify(value);
-  } else if (typeof value === 'boolean') {
+    } else if (typeof value === 'boolean') {
       if (!value) {
           return s;
       }
       value = 'on';
-  }
+    }
     return `${s}&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
   }, '').slice(1);
 }
