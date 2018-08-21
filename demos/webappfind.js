@@ -20,18 +20,18 @@ TODOS
 
 /**
 * @typedef {PlainObject} module:WebAppFind.MessageHandlers
-* @property {module:WebAppFind.ViewCallback} view
-* @property {module:WebAppFind.SaveEndCallback} saveEnd
+* @property {module:WebAppFind.ViewCallback} [view]
+* @property {module:WebAppFind.SaveEndCallback} [saveEnd]
 */
 /**
 * @typedef {PlainObject} module:WebAppFind.Options
-* @property {string[]} excludedMessages Array of message types to avoid erring upon encountering (besides `view` and `save-end`)
+* @property {string[]} [excludedMessages=["save"]] Array of message types to avoid erring upon encountering (besides `view` and `save-end`)
 */
 
 class WebAppFind {
     /**
-     * @param {module:WebAppFind.MessageHandlers} messageHandlers
-     * @param {module:WebAppFind.Options} options
+     * @param {module:WebAppFind.MessageHandlers} [messageHandlers]
+     * @param {module:WebAppFind.Options} [options]
      */
     constructor (messageHandlers, options) {
         messageHandlers = messageHandlers || {};
@@ -81,7 +81,9 @@ class WebAppFind {
             switch (type) {
             case 'view':
                 // Populate the contents
-                this.view({content, pathID: this.pathID});
+                if (this.view) { // Probably should exist, but could be excluded
+                    this.view({content, pathID: this.pathID});
+                }
                 break;
             case 'save-end':
                 if (this.saveEnd) {
