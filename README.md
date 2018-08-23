@@ -51,6 +51,30 @@ key values, and behaving as follows:
 
 ### webappfind.js
 
+#### `waf = new WebAppFind(messageHandlers, options)`
+
+This constructor can, for its `messageHandlers` argument, accept one or
+both of two optional message handlers:
+
+1. `view` - Triggered when a WebAppFind `view` message is received, indicating
+    that content is available. The single object sent to the handler will
+    have a `content` property set to the contents (string, or if the `binary`
+    flag is set, as a (typed) array). The object will also have a `pathID`
+    property which is currently required by WebAppFind (and as used internally
+    to `webappfind.js`) when saving back to disk (when in `edit` mode).
+2. `saveEnd` - Triggered when a WebAppFind `save-end` message is received (as
+    a result of a prior `save` message being sent). The single object sent to
+    the handler will have a `pathID` property.
+
+The `options` object can have an optional `excludedMessages` array property
+of string message types that, in addition to `view` and `save-end`, will not
+trigger errors (defaults to `save`).
+
+The WebAppFind instance, `waf`, that is returned can have its `save` method
+be used to save back changes to disk (assuming a `view` message with pathID
+has been received). This method returns a `Promise` which resolves to an
+object with a `pathID` property upon a successful save back to disk.
+
 ## To-dos
 
 1. Add TestCafe tests for demos (need to also call executables for simulating
@@ -229,6 +253,3 @@ key values, and behaving as follows:
 1. webappfind.js
     1. Adapt the webappfind.js utility class to reduce demo code (and
         allow better forward compatibility with any API changes).
-    1. Document
-1. meta-webappfind.js
-    1. Document
