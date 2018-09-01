@@ -1,3 +1,10 @@
+## 0.2.0
+
+- Breaking change: WebAppFind API for `view` and `saveEnd` to accept object
+- Breaking change: Drop `save` errBack argument (provide Promise return value instead)
+- Enhancement: Make `view` optional in WebAppFind API
+- Docs
+
 ## 0.1.0
 
 - Complete v3 conversion
