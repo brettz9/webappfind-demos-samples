@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>AsYouWish Demo: Node File Server</title>
+        <script type="module">
+
+        const params = new URL(window.location).searchParams;
+        window.addEventListener('message', ({data: {webappfind}}) => {
+            if (webappfind.method) { // Don't echo items just posted below
+                return;
+            }
+            const basePath = params.has('path') ? params.get('path') + '/' : '/';
+            if (webappfind.evalReady) {
+                if (!basePath.match(/^[\w./ -]*$/)) {
+                    // Todo: Refactor to allow non-ASCII and just escape single quotes, etc.
+                    console.log('Non-ASCII path provided');
+                    return;
+                }
+                console.log('basePath', basePath);
+                window.postMessage({
+                    webappfind: {
+                        method: 'nodeEval',
+                        string: `
+            const fs = require('fs');
+            fs.readdirSync('${basePath}').map((fileOrDir) => {
+                const stat = fs.lstatSync('${basePath}' + fileOrDir);
+                return [stat.isDirectory() || stat.isSymbolicLink(), fileOrDir];
+            });`
+                    }
+                }, '*');
+            } else {
+                document.querySelector('i').hidden = true;
+                document.querySelector('ul').append(...webappfind.result.map(([isDir, title]) => {
+                    const li = document.createElement('li');
+                    if (isDir) {
+                        const a = document.createElement('a');
+                        a.href = '?path=' + basePath + encodeURIComponent(title);
+                        a.append(title);
+                        li.append(a);
+                    } else {
+                        li.append(title);
+                    }
+                    return li;
+                }));
+            }
+        });
+        </script>
+    </head>
+    <body>
+        <h3>Files:</h3>
+        <i>Waiting AsYouWish activation...</i>
+        <ul></ul>
+    </body>
+</html>
