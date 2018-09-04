@@ -5,13 +5,13 @@
         <title>AsYouWish Demo: Node File Server</title>
         <script type="module">
 
-        function getParams () {
-            return new URLSearchParams(window.location.hash.slice(1));
+        function getBasePath () {
+            const params = new URLSearchParams(window.location.hash.slice(1));
+            return params.has('path') ? params.get('path') + '/' : '/';
         }
 
         function changePath () {
-            const params = getParams();
-            const basePath = params.has('path') ? params.get('path') + '/' : '/';
+            const basePath = getBasePath();
             if (!basePath.match(/^[\w./ -]*$/)) {
                 // Todo: Refactor to allow non-ASCII and just escape single quotes, etc.
                 console.log('Non-ASCII path provided');
@@ -38,8 +38,7 @@
             if (webappfind.evalReady) {
                 changePath();
             } else {
-                const params = getParams();
-                const basePath = params.has('path') ? params.get('path') + '/' : '/';
+                const basePath = getBasePath();
                 document.querySelector('i').hidden = true;
                 const ul = document.querySelector('ul');
                 while (ul.firstChild) {
