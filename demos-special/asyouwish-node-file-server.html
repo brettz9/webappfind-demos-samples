@@ -37,26 +37,26 @@
             }
             if (webappfind.evalReady) {
                 changePath();
-            } else {
-                const basePath = getBasePath();
-                document.querySelector('i').hidden = true;
-                const ul = document.querySelector('ul');
-                while (ul.firstChild) {
-                    ul.firstChild.remove();
-                }
-                ul.append(...webappfind.result.map(([isDir, title]) => {
-                    const li = document.createElement('li');
-                    if (isDir) {
-                        const a = document.createElement('a');
-                        a.href = '#path=' + basePath + encodeURIComponent(title);
-                        a.append(title);
-                        li.append(a);
-                    } else {
-                        li.append(title);
-                    }
-                    return li;
-                }));
+                return;
             }
+            const basePath = getBasePath();
+            document.querySelector('i').hidden = true;
+            const ul = document.querySelector('ul');
+            while (ul.firstChild) {
+                ul.firstChild.remove();
+            }
+            ul.append(...webappfind.result.map(([isDir, title]) => {
+                const li = document.createElement('li');
+                if (isDir) {
+                    const a = document.createElement('a');
+                    a.href = '#path=' + basePath + encodeURIComponent(title);
+                    a.append(title);
+                    li.append(a);
+                } else {
+                    li.append(title);
+                }
+                return li;
+            }));
         });
         </script>
     </head>
