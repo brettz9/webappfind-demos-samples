@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Enhancement: AsYouWish demos: Browser tabs and Node file server
+
 ## 0.2.0
 
 - Breaking change: WebAppFind API for `view` and `saveEnd` to accept object
