@@ -1,3 +1,8 @@
+## 0.4.0
+
+- npm: Update deps
+- Linting: Add ESLint
+
 ## 0.3.0
 
 - Enhancement: AsYouWish demos: Browser tabs and Node file server
