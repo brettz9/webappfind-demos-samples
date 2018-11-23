@@ -16,6 +16,28 @@ with some extra development work (pull requests welcome).
 version of Firefox and was Windows only. It is also missing some
 dependencies such as Jamilih.)
 
+## Adding to start-up
+
+If you want these demos available from localhost when you start up the
+machine, you can follow these steps:
+
+1. Create an Automator Application
+2. Add "Run Shell Script" with the following contents, adjusted to your path:
+
+```shell
+cd /Users/brett/webappfind-demos-samples
+
+# Shell script has different path than terminal, so to get Node in it, use
+# this (per https://stackoverflow.com/a/33941579/271577 )
+PATH="/usr/local/bin:$PATH"
+
+# Ensure we get right npm path for nvm
+$(npm bin -g)/npm start
+```
+
+3. Go to `System Preferences -> Users & Groups -> Login Items` and click `+` and
+    `Add` the application created in the above steps.
+
 ## Utility APIs
 
 webappfind-demos-samples currently bundles two utilities.
