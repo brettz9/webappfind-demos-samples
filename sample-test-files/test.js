@@ -53,4 +53,3 @@ function updateHints() {
   if (info.top + info.clientHeight < after)
     editor.scrollTo(null, after - info.clientHeight + 3);
 }
-

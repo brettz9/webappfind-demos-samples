@@ -1,0 +1,20 @@
+extraction:
+  javascript:
+    index:
+      filters:
+        - exclude: "demos/ckeditor"
+        - exclude: "demos/CodeMirror"
+        - exclude: "demos/pdf.js"
+
+        - exclude: "demos/blockly_compressed.js"
+        - exclude: "demos/blocks_compressed.js"
+        - exclude: "demos/csslint.js"
+        - exclude: "demos/en.js"
+        - exclude: "demos/fabric.min.js"
+        - exclude: "demos/gocr.js"
+        - exclude: "demos/jshint.js"
+        - exclude: "demos/jsonlint.js"
+        - exclude: "demos/jquery.csv.js"
+        - exclude: "demos/ocrad.js"
+        - exclude: "sample-test-files/blockly-files.js"
+        - exclude: "sample-test-files/test.js"

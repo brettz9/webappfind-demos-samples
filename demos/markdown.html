@@ -71,7 +71,7 @@ function makeMarker () {
     return marker;
 }
 function completeAfter(cm, pred) {
-    var cur = cm.getCursor();
+    /* var cur = */ cm.getCursor();
     if (!pred || pred()) {
         setTimeout(function() {
             if (!cm.state.completionActive) {
@@ -81,12 +81,15 @@ function completeAfter(cm, pred) {
     }
     return CodeMirror.Pass;
 }
+/*
 function completeIfAfterLt(cm) {
     return completeAfter(cm, function() {
         var cur = cm.getCursor();
         return cm.getRange(CodeMirror.Pos(cur.line, cur.ch - 1), cur) === '<';
     });
 }
+*/
+
 function completeIfInTag(cm) {
     return completeAfter(cm, function() {
         var inner,

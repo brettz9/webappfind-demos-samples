@@ -1,3 +1,12 @@
+## ?
+
+- Linting (LGTM): Add `lgtm.yml`, unused vars, strip WS
+- Linting (ESLint): Ignore certain third party files and test file;
+    browser env; other linting
+- Linting (Markdown): Fix linting format
+- Document how to add to start-up
+- npm: Update svgedit, Jamilih, devDeps
+
 ## 0.4.0
 
 - npm: Update deps

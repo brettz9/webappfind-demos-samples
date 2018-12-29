@@ -1,14 +1,15 @@
 /**
 * @param {Array} arr Array of objects containing the properties, "type" (type info to be added after 'web+local' withint the protocol), "instructions" (for the visible button text), and "info" (for the browser's own protocol message)
 */
-function addRegistrationHandlers (arr, url) {
+// eslint-disable-next-line no-unused-vars
+function addRegistrationHandlers (arr, url) { // lgtm [js/unused-local-variable]
     'use strict';
     function $ (sel) {
         return document.querySelector(sel);
     }
     url = url || (window.location.href.replace(/\?.*$/, '') + '?uri=%s');
     arr.forEach(function (method) {
-        var button = document.createElement('button');
+        const button = document.createElement('button');
         button.id = method.type;
         button.style.margin = '7px';
         button.append(method.instructions);
@@ -19,8 +20,7 @@ function addRegistrationHandlers (arr, url) {
                     url,
                     method.info
                 );
-            }
-            catch(err) {
+            } catch (err) {
                 if (url.match(/file:/)) {
                     alert('You must host this file on a server in order to register a protocol.');
                     return;

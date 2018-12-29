@@ -95,7 +95,7 @@ class WebAppFind {
                 }
                 break;
             default:
-                throw 'Unexpected mode: ' + type;
+                throw new Error('Unexpected mode: ' + type);
             }
         });
     }

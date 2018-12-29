@@ -1,5 +1,5 @@
-/*globals PDFJS, OCRAD, GOCR, FileReader, Uint8Array, ArrayBuffer*/
-/*jslint todo: true, vars: true*/
+/* globals PDFJS, OCRAD, GOCR, FileReader, Uint8Array, ArrayBuffer */
+/* jslint todo: true, vars: true */
 
 /*
 Todos:
@@ -10,27 +10,27 @@ function $ (sel) {
     return document.querySelector(sel);
 }
 
-let pdfObj, canvas, context, initial, endValue, ocrEngine,
-    saveMessage = 'save',
+let pdfObj, canvas, context, initial, endValue, ocrEngine;
+const saveMessage = 'save',
     excludedMessages = [saveMessage];
 
 function getPDF (pgNum) {
     // Using promise to fetch the page
-    pdfObj.getPage(pgNum).then(function(page) {
-        var scale = 1.5;
-        var viewport = page.getViewport(scale);
+    pdfObj.getPage(pgNum).then(function (page) {
+        const scale = 1.5;
+        const viewport = page.getViewport(scale);
 
         // Prepare canvas using PDF page dimensions
         canvas.height = viewport.height;
         canvas.width = viewport.width;
 
         // Render PDF page into canvas context
-        var renderContext = {
+        const renderContext = {
             canvasContext: context,
             viewport: viewport
         };
-        page.render(renderContext).promise.then(function() {
-            var string = ocrEngine(canvas);
+        page.render(renderContext).promise.then(function () {
+            const string = ocrEngine(canvas);
             $('#ocr-output').value += string;
             $('#ocr-output').blur();
             if (pgNum === endValue) {
@@ -63,8 +63,7 @@ function resetPDF () {
     if (!endValue || endValue < initial) {
         endValue = initial;
         $('#end').value = initial;
-    }
-    else if (endValue > pdfObj.numPages) {
+    } else if (endValue > pdfObj.numPages) {
         endValue = pdfObj.numPages;
         $('#end').value = pdfObj.numPages;
     }
@@ -78,26 +77,25 @@ function setPDF (doc) {
     PDFJS.getDocument(
         doc
         // 'helloworld.pdf'
-    ).then(function(pdf) {
-      // $('#begin').min = $('#end').min = 1;
-      $('#begin').max = $('#end').max = $('#end').placeholder = pdf.numPages;
-      $('#begin').title = $('#end').title = 'Max: ' + pdf.numPages + ' pages';
-      pdfObj = pdf;
-      $('#begin').readOnly = false;
-      $('#end').readOnly = false;
-      $('#begin').addEventListener('change', resetPDF);
-      $('#end').addEventListener('change', resetPDF);
-  });
+    ).then(function (pdf) {
+        // $('#begin').min = $('#end').min = 1;
+        $('#begin').max = $('#end').max = $('#end').placeholder = pdf.numPages;
+        $('#begin').title = $('#end').title = 'Max: ' + pdf.numPages + ' pages';
+        pdfObj = pdf;
+        $('#begin').readOnly = false;
+        $('#end').readOnly = false;
+        $('#begin').addEventListener('change', resetPDF);
+        $('#end').addEventListener('change', resetPDF);
+    });
 }
 
 $('#pdfFile').addEventListener('change', function (ev) {
+    const f = ev.target.files[0];
 
-    var f = ev.target.files[0];
-
-    var reader = new FileReader();
+    const reader = new FileReader();
     reader.onload = function (e) {
-        var arrayBuffer = e.target.result;
-        var array = new Uint8Array(arrayBuffer);
+        const arrayBuffer = e.target.result;
+        const array = new Uint8Array(arrayBuffer);
         setPDF(array);
     };
     reader.readAsArrayBuffer(f);
@@ -129,11 +127,13 @@ window.addEventListener('message', function ({data, origin}) {
         setPDF({data: content.data});
         // $('#save').disabled = false;
         break;
-    // Todo: We could allow raw editing of the PDF until such time as WYSIWYG editing becomes possible
-    // case 'save-end':
+    // Todo: We could allow raw editing of the PDF until such time
+    //   as WYSIWYG editing becomes possible
+    case 'save-end':
         // alert(`save complete for pathID ${pathID}!`);
-        // break;
+        console.log(`save complete for pathID ${pathID}!`);
+        break;
     default:
-        throw 'Unexpected mode: ' + type;
+        throw new Error('Unexpected mode: ' + type);
     }
 });

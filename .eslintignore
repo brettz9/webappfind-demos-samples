@@ -1,0 +1,17 @@
+node_modules
+demos/ckeditor
+demos/CodeMirror
+demos/pdf.js
+
+demos/blockly_compressed.js
+demos/blocks_compressed.js
+demos/csslint.js
+demos/en.js
+demos/fabric.min.js
+demos/gocr.js
+demos/jshint.js
+demos/jsonlint.js
+demos/jquery.csv.js
+demos/ocrad.js
+sample-test-files/blockly-files.js
+sample-test-files/test.js

@@ -1,5 +1,8 @@
 {
   "extends": "standard",
+  "env": {
+    "browser": true
+  },
   "rules": {
     "semi": [2, "always"],
     "indent": ["error", 4, {"outerIIFEBody": 0}],

@@ -2,7 +2,7 @@
  * @external JSONObject
  * @type {object}
  */
- /**
+/**
  * @typedef {object} PlainObject
  */
 /**
@@ -14,19 +14,19 @@
  * @returns {string}
  */
 export function serializeParams (params) {
-  return Object.entries(params).reduce((s, [key, value]) => {
-    if (Array.isArray(value)) {
-      value = value.join(' ');
-    } else if (value && typeof value === 'object') {
-      value = JSON.stringify(value);
-    } else if (typeof value === 'boolean') {
-      if (!value) {
-          return s;
-      }
-      value = 'on';
-    }
-    return `${s}&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-  }, '').slice(1);
+    return Object.entries(params).reduce((s, [key, value]) => {
+        if (Array.isArray(value)) {
+            value = value.join(' ');
+        } else if (value && typeof value === 'object') {
+            value = JSON.stringify(value);
+        } else if (typeof value === 'boolean') {
+            if (!value) {
+                return s;
+            }
+            value = 'on';
+        }
+        return `${s}&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    }, '').slice(1);
 }
 
 /**
@@ -36,10 +36,10 @@ export function serializeParams (params) {
 export function addMetas (metaInfos) {
     metaInfos = Array.isArray(metaInfos) ? metaInfos : [metaInfos];
     document.head.append(...metaInfos.map((params) => {
-      const meta = document.createElement('meta');
-      meta.name = 'webappfind';
-      meta.content = serializeParams(params);
-      return meta;
+        const meta = document.createElement('meta');
+        meta.name = 'webappfind';
+        meta.content = serializeParams(params);
+        return meta;
     }));
 }
 
