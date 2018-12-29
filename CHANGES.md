@@ -1,4 +1,4 @@
-## ?
+## 0.5.0
 
 - Linting (LGTM): Add `lgtm.yml`, unused vars, strip WS
 - Linting (ESLint): Ignore certain third party files and test file;
