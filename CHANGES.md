@@ -1,3 +1,12 @@
+# CHANGES for webappfind-demos-samples
+
+## ?
+
+- Linting: Switch to ash-nazg/sauron-node
+- Add core-js-bundle as dep. (not yet added)
+- npm: Update devDeps, jamilih and svgedit deps.; opn-cli -> open-cli
+- npm: Rename script from `open` -> `open-svg`
+
 ## 0.5.0
 
 - Linting (LGTM): Add `lgtm.yml`, unused vars, strip WS

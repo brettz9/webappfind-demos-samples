@@ -6,7 +6,8 @@
  * @typedef {object} PlainObject
  */
 /**
-* @typedef {PlainObject.<string, boolean|string|string[]|external:JSONObject>} module:MetaWebAppFind.Params
+* @typedef {PlainObject.<string, boolean|string|string[]|external:JSONObject>}
+* module:MetaWebAppFind.Params
 */
 
 /**
@@ -29,11 +30,13 @@ export function serializeParams (params) {
     }, '').slice(1);
 }
 
+/* eslint-disable max-len */
 /**
  * @param {module:MetaWebAppFind.Params|module:MetaWebAppFind.Params[]} metaInfos
  * @returns {undefined}
  */
 export function addMetas (metaInfos) {
+    /* eslint-enable max-len */
     metaInfos = Array.isArray(metaInfos) ? metaInfos : [metaInfos];
     document.head.append(...metaInfos.map((params) => {
         const meta = document.createElement('meta');
@@ -44,7 +47,9 @@ export function addMetas (metaInfos) {
 }
 
 // For content types, find type, e.g. for CSS:
-// defaults read /System/Library/CoreServices/CoreTypes.bundle/Contents/Info.plist | grep css
+// defaults read
+//   /System/Library/CoreServices/CoreTypes.bundle/Contents/Info.plist |
+//   grep css
 
 /*
 {

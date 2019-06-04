@@ -25,7 +25,9 @@ TODOS
 */
 /**
 * @typedef {PlainObject} module:WebAppFind.Options
-* @property {string[]} [excludedMessages=["save"]] Array of message types to avoid erring upon encountering (besides `view` and `save-end`)
+* @property {string[]} [excludedMessages=["save"]] Array of
+*   message types to avoid erring upon encountering (besides
+*   `view` and `save-end`)
 */
 
 class WebAppFind {
@@ -36,7 +38,8 @@ class WebAppFind {
     constructor (messageHandlers, options) {
         messageHandlers = messageHandlers || {};
         options = options || {};
-        this.view = messageHandlers.view; // Accepts as arguments: content, pathID
+        // Accepts as arguments: content, pathID
+        this.view = messageHandlers.view;
         this.saveEnd = messageHandlers.saveEnd;
         this.excludedMessages = options.excludedMessages || ['save'];
         this.resolvers = [];
@@ -48,7 +51,10 @@ class WebAppFind {
      */
     init () {
         if (!document.body) {
-            window.addEventListener('DOMContentLoaded', this.addListeners.bind(this));
+            window.addEventListener(
+                'DOMContentLoaded',
+                this.addListeners.bind(this)
+            );
         } else {
             this.addListeners();
         }
@@ -58,14 +64,15 @@ class WebAppFind {
      * @returns {undefined}
      */
     addListeners () {
-        window.addEventListener('message', ({data, origin}) => {
+        window.addEventListener('message', ({data, origin: orig}) => {
             // Could allow config to loosen for whitelisted sites
             let type, content, pathID;
             try {
-                ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+                // May throw if data is not an object
+                ({type, pathID, content} = data.webappfind);
                 // We are only interested in a message sent as though within
                 //   this URL by our browser add-on
-                if (origin !== location.origin ||
+                if (orig !== location.origin ||
                     // Avoid our post below (other messages might be possible in
                     //  the future which may also need to be excluded to avoid
                     //  the error below)
@@ -75,6 +82,7 @@ class WebAppFind {
                 }
                 Object.assign(this, {type, pathID, content});
             } catch (err) {
+                // eslint-disable-next-line no-console
                 console.log('err', err);
                 return;
             }
@@ -109,10 +117,11 @@ class WebAppFind {
     save (content) {
         if (!this.pathID) {
             throw new Error(
-                'No pathID set by Firefox yet! Remember to invoke this file from ' +
-                'an executable or command line and in edit mode.'
+                'No pathID set by Firefox yet! Remember to invoke this ' +
+                'file from an executable or command line and in edit mode.'
             );
         }
+        // eslint-disable-next-line promise/avoid-new
         return new Promise((resolve, reject) => {
             this.resolvers.push([resolve, reject]);
             window.postMessage({
@@ -121,7 +130,9 @@ class WebAppFind {
                     pathID: this.pathID,
                     content
                 }
-            }, location.origin); // Could make origin configurable if wished to leak info to other sites
+            // Could make origin configurable if wished to leak info
+            //   to other sites
+            }, location.origin);
         });
     }
 }

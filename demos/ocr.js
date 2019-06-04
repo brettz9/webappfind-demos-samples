@@ -1,9 +1,11 @@
-/* globals PDFJS, OCRAD, GOCR, FileReader, Uint8Array, ArrayBuffer */
-/* jslint todo: true, vars: true */
+/* globals PDFJS, OCRAD, GOCR */
+/* eslint-disable no-console */
+/* eslint-env browser */
 
 /*
 Todos:
-1. Detect from the decoded URL "params" JSON object's fileType whether a PDF, image, or SVG has been opened and act accordingly in order to OCR.
+1. Detect from the decoded URL "params" JSON object's fileType whether
+    a PDF, image, or SVG has been opened and act accordingly in order to OCR.
 */
 
 function $ (sel) {
@@ -14,36 +16,34 @@ let pdfObj, canvas, context, initial, endValue, ocrEngine;
 const saveMessage = 'save',
     excludedMessages = [saveMessage];
 
-function getPDF (pgNum) {
+async function getPDF (pgNum) {
     // Using promise to fetch the page
-    pdfObj.getPage(pgNum).then(function (page) {
-        const scale = 1.5;
-        const viewport = page.getViewport(scale);
+    const page = await pdfObj.getPage(pgNum);
+    const scale = 1.5;
+    const viewport = page.getViewport(scale);
 
-        // Prepare canvas using PDF page dimensions
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
+    // Prepare canvas using PDF page dimensions
+    canvas.height = viewport.height;
+    canvas.width = viewport.width;
 
-        // Render PDF page into canvas context
-        const renderContext = {
-            canvasContext: context,
-            viewport: viewport
-        };
-        page.render(renderContext).promise.then(function () {
-            const string = ocrEngine(canvas);
-            $('#ocr-output').value += string;
-            $('#ocr-output').blur();
-            if (pgNum === endValue) {
-                $('#ocr-output').readOnly = false;
-                $('#begin').readOnly = false;
-                $('#end').readOnly = false;
-                $('#message').style.visibility = 'hidden';
-                canvas.style.visibility = 'visible';
-                return;
-            }
-            getPDF(++pgNum);
-        });
-    });
+    // Render PDF page into canvas context
+    const renderContext = {
+        canvasContext: context,
+        viewport
+    };
+    await page.render(renderContext).promise;
+    const string = ocrEngine(canvas);
+    $('#ocr-output').value += string;
+    $('#ocr-output').blur();
+    if (pgNum === endValue) {
+        $('#ocr-output').readOnly = false;
+        $('#begin').readOnly = false;
+        $('#end').readOnly = false;
+        $('#message').style.visibility = 'hidden';
+        canvas.style.visibility = 'visible';
+        return;
+    }
+    getPDF(++pgNum);
 }
 function resetPDF () {
     $('#begin').readOnly = true;
@@ -54,8 +54,8 @@ function resetPDF () {
     context = canvas.getContext('2d');
     $('#message').style.visibility = 'visible';
     canvas.style.visibility = 'hidden';
-    initial = parseInt($('#begin').value, 10) || 1;
-    endValue = parseInt($('#end').value, 10);
+    initial = parseInt($('#begin').value) || 1;
+    endValue = parseInt($('#end').value);
     if (initial > pdfObj.numPages) {
         initial = pdfObj.numPages;
         $('#begin').value = pdfObj.numPages;
@@ -71,43 +71,49 @@ function resetPDF () {
     getPDF(initial);
 }
 
-function setPDF (doc) {
+async function setPDF (doc) {
     // Fetch the PDF document using promises
     //
-    PDFJS.getDocument(
+    const pdf = await PDFJS.getDocument(
         doc
         // 'helloworld.pdf'
-    ).then(function (pdf) {
-        // $('#begin').min = $('#end').min = 1;
-        $('#begin').max = $('#end').max = $('#end').placeholder = pdf.numPages;
-        $('#begin').title = $('#end').title = 'Max: ' + pdf.numPages + ' pages';
-        pdfObj = pdf;
-        $('#begin').readOnly = false;
-        $('#end').readOnly = false;
-        $('#begin').addEventListener('change', resetPDF);
-        $('#end').addEventListener('change', resetPDF);
-    });
+    );
+    // $('#begin').min = $('#end').min = 1;
+    $('#begin').max = $('#end').max = $('#end').placeholder = pdf.numPages;
+    $('#begin').title = $('#end').title = 'Max: ' + pdf.numPages + ' pages';
+    pdfObj = pdf;
+    $('#begin').readOnly = false;
+    $('#end').readOnly = false;
+    $('#begin').addEventListener('change', resetPDF);
+    $('#end').addEventListener('change', resetPDF);
 }
 
 $('#pdfFile').addEventListener('change', function (ev) {
     const f = ev.target.files[0];
 
     const reader = new FileReader();
-    reader.onload = function (e) {
+    reader.addEventListener('load', function (e) {
         const arrayBuffer = e.target.result;
         const array = new Uint8Array(arrayBuffer);
         setPDF(array);
-    };
+    });
     reader.readAsArrayBuffer(f);
 });
 
 let pathID;
-window.addEventListener('message', function ({data, origin}) {
+window.addEventListener('message', function ({data, origin: orig}) {
     let type, content;
     try {
-        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
-        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
-            excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
+        // May throw if data is not an object
+        ({type, pathID, content} = data.webappfind);
+        // We are only interested in a message sent as though within
+        //  this URL by our browser add-on
+        if (orig !== location.origin ||
+            // Avoid our post below (other messages might be possible in
+            //  the future which may also need to be excluded if your
+            //  subsequent code makes assumptions on the type of
+            //  message this is)
+            excludedMessages.includes(type)
         ) {
             return;
         }
