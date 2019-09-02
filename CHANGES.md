@@ -1,10 +1,12 @@
 # CHANGES for webappfind-demos-samples
 
-## ?
+## 0.6.0
 
 - Linting: Switch to ash-nazg/sauron-node
+- Linting: Lint Markdown JS
 - Add core-js-bundle as dep. (not yet added)
-- npm: Update devDeps, jamilih and svgedit deps.; opn-cli -> open-cli
+- npm: Update devDeps, jamilih, base64-js, core-js-bundle, and svgedit deps.;
+  opn-cli -> open-cli
 - npm: Rename script from `open` -> `open-svg`
 
 ## 0.5.0
