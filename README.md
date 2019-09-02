@@ -35,6 +35,12 @@ PATH="/usr/local/bin:$PATH"
 $(npm bin -g)/npm start
 ```
 
+You may need to modify the PATH for NVM:
+
+```shell
+PATH="/usr/local/bin:/Users/brett/.nvm/versions/node/v12.9.1/bin:$PATH"
+```
+
 3. Go to `System Preferences -> Users & Groups -> Login Items` and click `+` and
     `Add` the application created in the above steps.
 
