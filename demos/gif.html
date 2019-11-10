@@ -9,43 +9,43 @@
 <body>
 <img />
 <script type="module">
-/*globals btoa, base64js */
+/* globals base64js */
 
-let pathID,
-    saveMessage = 'save',
-    excludedMessages = [saveMessage],
-    img = document.querySelector('img'),
-    imageType = 'gif';
+let pathID;
+const saveMessage = 'save',
+  excludedMessages = [saveMessage],
+  img = document.querySelector('img'),
+  imageType = 'gif';
 
 document.title = 'WebAppFind ' + imageType.toUpperCase() + ' viewer';
 
-window.addEventListener('message', function ({data, origin}) {
-    let type, content;
-    try {
-        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
-        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+window.addEventListener('message', function ({data, origin: orig}) {
+  let type, content;
+  try {
+    ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+    if (orig !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
             excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
-        ) {
-            return;
-        }
-    } catch (err) {
-        return;
+    ) {
+      return;
     }
-    switch (type) {
-    case 'view':
-        // Populate the contents
-        const encoded = base64js.fromByteArray(content.data);
-        img.src = 'data:image/' + imageType + ';base64,' + encoded;
-        // $('#save').disabled = false;
-        break;
-    /* case 'save-end':
-        alert('save complete for pathID ' + pathID + '!');
-        break; */
-    default:
-        throw 'Unexpected mode: ' + type;
-    }
+  } catch (err) {
+    return;
+  }
+  switch (type) {
+  case 'view': {
+    // Populate the contents
+    const encoded = base64js.fromByteArray(content.data);
+    img.src = 'data:image/' + imageType + ';base64,' + encoded;
+    // $('#save').disabled = false;
+    break;
+  } case 'save-end':
+    // eslint-disable-next-line no-console
+    console.log('save complete for pathID ' + pathID + '!');
+    break;
+  default:
+    throw new Error('Unexpected mode: ' + type);
+  }
 });
-
 </script>
 </body>
 </html>

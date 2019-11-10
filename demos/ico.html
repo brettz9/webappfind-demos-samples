@@ -17,74 +17,72 @@
 </div>
 <img />
 <script type="module">
-/* globals btoa, base64js */
+/* globals base64js */
 
 function $ (sel) {
-    return document.querySelector(sel);
+  return document.querySelector(sel);
 }
 
-let pathID,
-    saveMessage = 'save',
-    excludedMessages = [saveMessage],
-    img = $('img'),
-    imageType = 'x-icon',
-    icoMIME = 'image/x-icon',
-    addFavicon = function () {
-        const link = document.createElement('link');
-        link.type = icoMIME;
-        link.rel = 'shortcut icon';
-        link.href = img.src;
-        document.getElementsByTagName('head')[0].appendChild(link);
-    },
-    replaceFavicon = function (icon, canvas) {
-        const newIcon = icon.cloneNode(true);
-        newIcon.setAttribute('href', canvas.toDataURL(icoMIME));
-        icon.parentNode.replaceChild(newIcon, icon);
-        // $('link').href = canvas.toDataURL(icoMIME); // This alone doesn't work; have to replace whole element
-    };
+let pathID;
+const saveMessage = 'save',
+  excludedMessages = [saveMessage],
+  img = $('img'),
+  imageType = 'x-icon',
+  icoMIME = 'image/x-icon',
+  addFavicon = function () {
+    const link = document.createElement('link');
+    link.type = icoMIME;
+    link.rel = 'shortcut icon';
+    link.href = img.src;
+    document.querySelectorAll('head')[0].append(link);
+  },
+  replaceFavicon = function (icon, canvas) {
+    const newIcon = icon.cloneNode(true);
+    newIcon.setAttribute('href', canvas.toDataURL(icoMIME));
+    icon.parentNode.replaceChild(newIcon, icon);
+    // $('link').href = canvas.toDataURL(icoMIME); // This alone doesn't work; have to replace whole element
+  };
 
 $('#sizes').addEventListener('click', function () {
-    var ctx,
-        canvas = document.createElement('canvas'),
-        size = this.options[this.selectedIndex].value;
-    $('img').style.width = $('img').style.height = size + 'px';
-    canvas.width = size;
-    canvas.height = size;
-    ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
+  const canvas = document.createElement('canvas'),
+    size = this.options[this.selectedIndex].value;
+  $('img').style.width = $('img').style.height = size + 'px';
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
 
-    replaceFavicon($('link'), canvas); // We could just replace the icon without canvas, but we do the above with canvas in case resizing makes a difference
+  replaceFavicon($('link'), canvas); // We could just replace the icon without canvas, but we do the above with canvas in case resizing makes a difference
 });
 
-
-window.addEventListener('message', function ({data, origin}) {
-    let type, content;
-    try {
-        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
-        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+window.addEventListener('message', function ({data, origin: orig}) {
+  let type, content;
+  try {
+    ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+    if (orig !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
             excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
-        ) {
-            return;
-        }
-    } catch (err) {
-        return;
+    ) {
+      return;
     }
-    switch (type) {
-    case 'view':
-        // Populate the contents
-        const encoded = base64js.fromByteArray(content.data);
-        img.src = 'data:image/' + imageType + ';base64,' + encoded; // Converts binary string to base64
-        addFavicon(); // No need to wait for img.onload
-        // $('#save').disabled = false;
-        break;
-    /* case 'save-end':
-        alert(`save complete for pathID ${pathID}!`);
-        break; */
-    default:
-        throw 'Unexpected mode: ' + type;
-    }
+  } catch (err) {
+    return;
+  }
+  switch (type) {
+  case 'view': {
+    // Populate the contents
+    const encoded = base64js.fromByteArray(content.data);
+    img.src = 'data:image/' + imageType + ';base64,' + encoded; // Converts binary string to base64
+    addFavicon(); // No need to wait for img.onload
+    // $('#save').disabled = false;
+    break;
+  } case 'save-end':
+    // eslint-disable-next-line no-console
+    console.log(`save complete for pathID ${pathID}!`);
+    break;
+  default:
+    throw new Error('Unexpected mode: ' + type);
+  }
 });
-
 </script>
 </body>
 </html>

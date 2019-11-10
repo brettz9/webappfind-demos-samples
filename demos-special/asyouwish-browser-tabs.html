@@ -4,32 +4,30 @@
         <meta charset="utf-8">
         <title>AsYouWish Demo: Browser tabs</title>
         <script type="module">
-
         window.addEventListener('message', ({data: {webappfind}}) => {
-            if (webappfind.method) { // Don't echo items just posted below
-                return;
-            }
-            if (webappfind.evalReady) {
-                window.postMessage({
-                    webappfind: {
-                        method: 'addonEval',
-                        string: `
+          if (webappfind.method) { // Don't echo items just posted below
+            return;
+          }
+          if (webappfind.evalReady) {
+            window.postMessage({
+              webappfind: {
+                method: 'addonEval',
+                string: `
             browser.tabs.query({}).then((tabs) => {
                 return tabs.map(({title}) => title);
             });
                         `
-                    }
-                }, '*');
-            } else {
-                document.querySelector('i').hidden = true;
-                document.querySelector('ul').append(...webappfind.result.map((title) => {
-                    const li = document.createElement('li');
-                    li.append(title);
-                    return li;
-                }));
-            }
+              }
+            }, '*');
+          } else {
+            document.querySelector('i').hidden = true;
+            document.querySelector('ul').append(...webappfind.result.map((title) => {
+              const li = document.createElement('li');
+              li.append(title);
+              return li;
+            }));
+          }
         });
-
         </script>
     </head>
     <body>

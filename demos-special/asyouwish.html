@@ -5,31 +5,31 @@
         <title>AsYouWish demo</title>
         <script defer="">
         window.addEventListener('message', ({data: {webappfind}}) => {
-            if (webappfind.method) { // Don't echo items just posted below
-                return;
-            }
-            if (webappfind.evalReady) {
-                window.postMessage({
-                    webappfind: {
-                        method: 'addonEval',
-                        string: `
+          if (webappfind.method) { // Don't echo items just posted below
+            return;
+          }
+          if (webappfind.evalReady) {
+            window.postMessage({
+              webappfind: {
+                method: 'addonEval',
+                string: `
             browser.tabs.create({
                 url: 'https://en.wikipedia.org'
             });
                         `
-                    }
-                }, '*');
-                window.postMessage({
-                    webappfind: {
-                        method: 'nodeEval',
-                        string: `
+              }
+            }, '*');
+            window.postMessage({
+              webappfind: {
+                method: 'nodeEval',
+                string: `
             require('path').join('a', 'b', 'c');
                         `
-                    }
-                }, '*');
-            } else {
-                alert('got evaled result: ' + JSON.stringify(webappfind, null, 2));
-            }
+              }
+            }, '*');
+          } else {
+            alert('got evaled result: ' + JSON.stringify(webappfind, null, 2));
+          }
         });
         </script>
     </head>

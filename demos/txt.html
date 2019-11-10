@@ -15,20 +15,19 @@ TODOS:
 */
 
 function $ (sel) {
-    return document.querySelector(sel);
+  return document.querySelector(sel);
 }
 
 const waf = new WebAppFind({
-    view ({content}) {
-        $('#text').value = content;
-        $('#save').disabled = false;
-    }
+  view ({content}) {
+    $('#text').value = content;
+    $('#save').disabled = false;
+  }
 });
 
-$('#save').addEventListener('click', function () {
-    waf.save($('#text').value).then(({pathID}) => {
-        alert('save complete for pathID ' + pathID + '!');
-    });
+$('#save').addEventListener('click', async function () {
+  const {pathID} = await waf.save($('#text').value);
+  alert('save complete for pathID ' + pathID + '!');
 });
 
 /*
@@ -37,7 +36,6 @@ $('#save').addEventListener('click', function () {
         instructions: 'Register this app as a handler for viewing local TXT files'
     }], 'http://127.0.0.1/webappfind/demos/txt.html?uri=%s');
 */
-
     </script>
 </head>
 <body>

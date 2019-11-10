@@ -182,73 +182,72 @@
     <category name="Procedures" custom="PROCEDURE"></category>
 </xml>
 <script>
-/*globals Blockly */
+/* globals Blockly */
 
 // Todo: Get updates from https://github.com/google/blockly
 
 Blockly.inject(
-    document.getElementById('blocklyDiv'), {
-        path: '../../blockly/',
-        toolbox: document.getElementById('toolbox')
-    }
+  document.querySelector('#blocklyDiv'), {
+    path: '../../blockly/',
+    toolbox: document.querySelector('#toolbox')
+  }
 );
 
-let pathID,
-    saveMessage = 'save',
-    excludedMessages = [saveMessage];
+let pathID;
+const saveMessage = 'save',
+  excludedMessages = [saveMessage];
 
 function $ (sel) {
-    return document.querySelector(sel);
+  return document.querySelector(sel);
 }
 
-window.addEventListener('message', function ({data, origin}) {
-    let type, content;
-    try {
-        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
-        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+window.addEventListener('message', function ({data, origin: orig}) {
+  let type, content;
+  try {
+    ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+    if (orig !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
             excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
-        ) {
-            return;
-        }
-    } catch (err) {
-        return;
+    ) {
+      return;
     }
+  } catch (err) {
+    return;
+  }
 
-    var xml;
-    switch (type) {
-    case 'view':
-        // Populate the contents
-        try {
-            xml = Blockly.Xml.textToDom(content);
-            Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
-        }
-        finally {
-            $('#save').disabled = false;
-        }
-        break;
-    case 'save-end':
-        alert(`save complete for pathID ${pathID}!`);
-        break;
-    default:
-        throw 'Unexpected mode: ' + type;
+  let xml;
+  switch (type) {
+  case 'view':
+    // Populate the contents
+    try {
+      xml = Blockly.Xml.textToDom(content);
+      Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
+    } finally {
+      $('#save').disabled = false;
     }
+    break;
+  case 'save-end':
+    alert(`save complete for pathID ${pathID}!`);
+    break;
+  default:
+    throw new Error('Unexpected mode: ' + type);
+  }
 });
 
 $('#save').addEventListener('click', function () {
-    if (!pathID) {
-        alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
-        return;
-    }
-    var xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace),
-        content = Blockly.Xml.domToText(xml);
+  if (!pathID) {
+    alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
+    return;
+  }
+  const xml = Blockly.Xml.workspaceToDom(Blockly.mainWorkspace),
+    content = Blockly.Xml.domToText(xml);
 
-    window.postMessage({
-        webappfind: {
-            type: saveMessage,
-            pathID,
-            content
-        }
-    }, location.origin);
+  window.postMessage({
+    webappfind: {
+      type: saveMessage,
+      pathID,
+      content
+    }
+  }, location.origin);
 });
 
 /*
@@ -271,7 +270,6 @@ setTimeout(function () {
     alert(xml_text);
 }, 5000);
 */
-
 </script>
 </body>
 </html>

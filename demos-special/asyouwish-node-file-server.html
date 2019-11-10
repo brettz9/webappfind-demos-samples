@@ -4,59 +4,59 @@
         <meta charset="utf-8">
         <title>AsYouWish Demo: Node File Server</title>
         <script type="module">
-
         function getBasePath () {
-            const params = new URLSearchParams(window.location.hash.slice(1));
-            return params.has('path') ? params.get('path') + '/' : '/';
+          const params = new URLSearchParams(window.location.hash.slice(1));
+          return params.has('path') ? params.get('path') + '/' : '/';
         }
 
         function changePath () {
-            const basePath = getBasePath();
-            if (!basePath.match(/^[\w./ -]*$/)) {
-                // Todo: Refactor to allow non-ASCII and just escape single quotes, etc.
-                console.log('Non-ASCII path provided');
-                return;
-            }
-            window.postMessage({
-                webappfind: {
-                    method: 'nodeEval',
-                    string: `
+          const basePath = getBasePath();
+          if (!basePath.match(/^[\w./ -]*$/)) {
+            // Todo: Refactor to allow non-ASCII and just escape single quotes, etc.
+            // eslint-disable-next-line no-console
+            console.log('Non-ASCII path provided');
+            return;
+          }
+          window.postMessage({
+            webappfind: {
+              method: 'nodeEval',
+              string: `
         const fs = require('fs');
         fs.readdirSync('${basePath}').map((fileOrDir) => {
             const stat = fs.lstatSync('${basePath}' + fileOrDir);
             return [stat.isDirectory() || stat.isSymbolicLink(), fileOrDir];
         });`
-                }
-            }, '*');
+            }
+          }, '*');
         }
 
         window.addEventListener('hashchange', changePath);
         window.addEventListener('message', ({data: {webappfind}}) => {
-            if (webappfind.method) { // Don't echo items just posted below
-                return;
+          if (webappfind.method) { // Don't echo items just posted below
+            return;
+          }
+          if (webappfind.evalReady) {
+            changePath();
+            return;
+          }
+          const basePath = getBasePath();
+          document.querySelector('i').hidden = true;
+          const ul = document.querySelector('ul');
+          while (ul.firstChild) {
+            ul.firstChild.remove();
+          }
+          ul.append(...webappfind.result.map(([isDir, title]) => {
+            const li = document.createElement('li');
+            if (isDir) {
+              const a = document.createElement('a');
+              a.href = '#path=' + basePath + encodeURIComponent(title);
+              a.append(title);
+              li.append(a);
+            } else {
+              li.append(title);
             }
-            if (webappfind.evalReady) {
-                changePath();
-                return;
-            }
-            const basePath = getBasePath();
-            document.querySelector('i').hidden = true;
-            const ul = document.querySelector('ul');
-            while (ul.firstChild) {
-                ul.firstChild.remove();
-            }
-            ul.append(...webappfind.result.map(([isDir, title]) => {
-                const li = document.createElement('li');
-                if (isDir) {
-                    const a = document.createElement('a');
-                    a.href = '#path=' + basePath + encodeURIComponent(title);
-                    a.append(title);
-                    li.append(a);
-                } else {
-                    li.append(title);
-                }
-                return li;
-            }));
+            return li;
+          }));
         });
         </script>
     </head>

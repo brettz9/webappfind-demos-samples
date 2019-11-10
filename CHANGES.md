@@ -1,5 +1,14 @@
 # CHANGES for webappfind-demos-samples
 
+## 0.7.0
+
+- Breaking change: Specify Node version 10.0.0 (`URLSearchParams` in server)
+- Linting (LGTM): javascript-shell - disable warning re: eval
+- Linting (ESLint): Switch to 2sp. indent; apply other fixes; apply to HTML
+- Maintenance: Add `.editorconfig`
+- Docs: NVM
+- npm: Bump deps (`core-js-bundle`, `jamilih`) and devDeps
+
 ## 0.6.0
 
 - Linting: Switch to ash-nazg/sauron-node

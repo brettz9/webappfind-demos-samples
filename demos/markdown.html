@@ -55,31 +55,30 @@ TODOS:
 1. We could allow separate tabs when new pathIDs are obtained via our message listener
 */
 
-let saveMessage = 'save',
-    excludedMessages = [saveMessage];
-
+const saveMessage = 'save',
+  excludedMessages = [saveMessage];
 
 function $ (sel) {
-    return document.querySelector(sel);
+  return document.querySelector(sel);
 }
 
 // Could pass option 'readOnly' if determine from protocol that this is view mode only
 function makeMarker () {
-    var marker = document.createElement('div');
-    marker.appendChild(document.createTextNode('\u25cf'));
-    marker.className = 'CodeMirror-breakpoint';
-    return marker;
+  const marker = document.createElement('div');
+  marker.append(document.createTextNode('\u25CF'));
+  marker.className = 'CodeMirror-breakpoint';
+  return marker;
 }
-function completeAfter(cm, pred) {
-    /* var cur = */ cm.getCursor();
-    if (!pred || pred()) {
-        setTimeout(function() {
-            if (!cm.state.completionActive) {
-                CodeMirror.showHint(cm, CodeMirror.hint.xml, {/*schemaInfo: tags,*/ completeSingle: false});
-            }
-        }, 100);
-    }
-    return CodeMirror.Pass;
+function completeAfter (cm, pred) {
+  /* var cur = */ cm.getCursor();
+  if (!pred || pred()) {
+    setTimeout(function () {
+      if (!cm.state.completionActive) {
+        CodeMirror.showHint(cm, CodeMirror.hint.xml, {/* schemaInfo: tags, */ completeSingle: false});
+      }
+    }, 100);
+  }
+  return CodeMirror.Pass;
 }
 /*
 function completeIfAfterLt(cm) {
@@ -90,129 +89,130 @@ function completeIfAfterLt(cm) {
 }
 */
 
-function completeIfInTag(cm) {
-    return completeAfter(cm, function() {
-        var inner,
-          tok = cm.getTokenAt(cm.getCursor());
-        if (tok.type === 'string' && (!(/['"]/).test(tok.string.charAt(tok.string.length - 1)) || tok.string.length === 1)) {
-            return false;
-        }
-        inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
-        return inner.tagName;
-    });
+function completeIfInTag (cm) {
+  return completeAfter(cm, function () {
+    const tok = cm.getTokenAt(cm.getCursor());
+    if (tok.type === 'string' && (!(/['"]/).test(tok.string.charAt(tok.string.length - 1)) || tok.string.length === 1)) {
+      return false;
+    }
+    const inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
+    return inner.tagName;
+  });
 }
 
-CodeMirror.commands.autocomplete = function(cm) {
-    CodeMirror.showHint(cm, CodeMirror.hint.xml, {/*schemaInfo: tags,*/ completeSingle: false});
+CodeMirror.commands.autocomplete = function (cm) {
+  CodeMirror.showHint(cm, CodeMirror.hint.xml, {/* schemaInfo: tags, */ completeSingle: false});
 };
-var pathID,
-    breakpointsClass = 'CodeMirror-breakpoints',
-    urlThemePattern = /[?&]theme=(.*?)(?:&|$)/,
-    cookieThemePattern = /(?:^|;)\s*theme=([^;]*)(?:;|$)/,
-    cm = CodeMirror.fromTextArea($('#markdown'), {
-        mode: 'markdown', // Markdown
-        autofocus: true,
-        lineNumbers: true,
-        lineWrapping: true,
-        styleActiveLine: true,
-        styleSelectedText: true,
-        showTrailingSpace: true,
-        tabSize: 4,
-        indentUnit: 4,
-        // indentWithTabs: true,
-        highlightSelectionMatches: {showToken: /\w/},
-        viewportMargin: Infinity, // Make sure whole doc is rendered so browser text search will work; will badly affect large docs per http://codemirror.net/doc/manual.html#option_viewportMargin
-        matchTags: {bothTags: true},
-        autoCloseTags: true,
-        extraKeys: {
-            "Enter": "newlineAndIndentContinueMarkdownList", // Markdown
-            "'<'": completeAfter,
-            // "'/'": completeIfAfterLt, // Unnecessary when closetag is in use
-            "' '": completeIfInTag,
-            "'='": completeIfInTag,
-            'Ctrl-J': 'toMatchingTag',
-            'Ctrl-Q': function (cm) {cm.foldCode(cm.getCursor());},
-            'Ctrl-Space': 'autocomplete',
-            Tab: function (cm) {
-                var spaces = new Array(cm.getOption('indentUnit') + 1).join(' ');
-                cm.replaceSelection(spaces, 'end', '+input');
-            }
-        },
-        foldGutter: {
-            rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.xml, CodeMirror.fold.comment)
-        },
-        gutters: ['CodeMirror-lint-markers', 'CodeMirror-foldgutter', 'CodeMirror-linenumbers', breakpointsClass],
-        lint: {bitwise: true}
-    }),
-    choice = (document.location.search && document.location.search.match(urlThemePattern)) ||
-        (document.cookie && document.cookie.match(cookieThemePattern))
-        || '';
+let pathID;
+const breakpointsClass = 'CodeMirror-breakpoints',
+  urlThemePattern = /[?&]theme=(.*?)(?:&|$)/,
+  cookieThemePattern = /(?:^|;)\s*theme=([^;]*)(?:;|$)/,
+  cm = CodeMirror.fromTextArea($('#markdown'), {
+    mode: 'markdown', // Markdown
+    autofocus: true,
+    lineNumbers: true,
+    lineWrapping: true,
+    styleActiveLine: true,
+    styleSelectedText: true,
+    showTrailingSpace: true,
+    tabSize: 4,
+    indentUnit: 4,
+    // indentWithTabs: true,
+    highlightSelectionMatches: {showToken: /\w/},
+    viewportMargin: Infinity, // Make sure whole doc is rendered so browser text search will work; will badly affect large docs per http://codemirror.net/doc/manual.html#option_viewportMargin
+    matchTags: {bothTags: true},
+    autoCloseTags: true,
+    extraKeys: {
+      Enter: 'newlineAndIndentContinueMarkdownList', // Markdown
+      "'<'": completeAfter,
+      // "'/'": completeIfAfterLt, // Unnecessary when closetag is in use
+      "' '": completeIfInTag,
+      "'='": completeIfInTag,
+      'Ctrl-J': 'toMatchingTag',
+      'Ctrl-Q' (codem) { codem.foldCode(codem.getCursor()); },
+      'Ctrl-Space': 'autocomplete',
+      Tab (codem) {
+        const spaces = new Array(codem.getOption('indentUnit') + 1).join(' ');
+        codem.replaceSelection(spaces, 'end', '+input');
+      }
+    },
+    foldGutter: {
+      // eslint-disable-next-line new-cap
+      rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.xml, CodeMirror.fold.comment)
+    },
+    gutters: ['CodeMirror-lint-markers', 'CodeMirror-foldgutter', 'CodeMirror-linenumbers', breakpointsClass],
+    lint: {bitwise: true}
+  });
+
+let choice = (document.location.search && document.location.search.match(urlThemePattern)) ||
+        (document.cookie && document.cookie.match(cookieThemePattern)) ||
+        '';
 choice = choice && choice[1];
 
-cm.on('gutterClick', function(cm, n, clickedGutterClass) { // , e
-    if (clickedGutterClass !== breakpointsClass) {
-        return;
-    }
-    var info = cm.lineInfo(n),
-        gutterMarkers = info.gutterMarkers || {},
-        hasBreakpointToRemove = gutterMarkers['CodeMirror-breakpoints'];
-    cm.setGutterMarker(n, breakpointsClass, hasBreakpointToRemove ? null : makeMarker());
+cm.on('gutterClick', function (codem, n, clickedGutterClass) { // , e
+  if (clickedGutterClass !== breakpointsClass) {
+    return;
+  }
+  const info = codem.lineInfo(n),
+    gutterMarkers = info.gutterMarkers || {},
+    hasBreakpointToRemove = gutterMarkers['CodeMirror-breakpoints'];
+  codem.setGutterMarker(n, breakpointsClass, hasBreakpointToRemove ? null : makeMarker());
 });
 
-window.addEventListener('message', function ({data, origin}) {
-    let type, content;
-    try {
-        ({type, pathID, content} = data.webappfind); // May throw if data is not an object
-        if (origin !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
+window.addEventListener('message', function ({data, origin: orig}) {
+  let type, content;
+  try {
+    ({type, pathID, content} = data.webappfind); // May throw if data is not an object
+    if (orig !== location.origin || // We are only interested in a message sent as though within this URL by our browser add-on
             excludedMessages.includes(type) // Avoid our post below (other messages might be possible in the future which may also need to be excluded if your subsequent code makes assumptions on the type of message this is)
-        ) {
-            return;
-        }
-    } catch (err) {
-        return;
+    ) {
+      return;
     }
-    switch (type) {
-    case 'view':
-        // Populate the contents
-        cm.setValue(content);
-        $('#save').disabled = false;
-        break;
-    case 'save-end':
-        alert(`save complete for pathID ${pathID}!`);
-        break;
-    default:
-        throw 'Unexpected mode: ' + type;
-    }
+  } catch (err) {
+    return;
+  }
+  switch (type) {
+  case 'view':
+    // Populate the contents
+    cm.setValue(content);
+    $('#save').disabled = false;
+    break;
+  case 'save-end':
+    alert(`save complete for pathID ${pathID}!`);
+    break;
+  default:
+    throw new Error('Unexpected mode: ' + type);
+  }
 });
 
 $('#save').addEventListener('click', function () {
-    if (!pathID) {
-        alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
-        return;
+  if (!pathID) {
+    alert('No pathID set by Firefox yet! Remember to invoke this file from an executable or command line and in edit mode.');
+    return;
+  }
+  window.postMessage({
+    webappfind: {
+      type: saveMessage,
+      pathID,
+      content: cm.getValue()
     }
-    window.postMessage({
-        webappfind: {
-            type: saveMessage,
-            pathID,
-            content: cm.getValue()
-        }
-    }, location.origin);
+  }, location.origin);
 });
 
 function themes () {
-    var theme = this.options[this.selectedIndex].value,
-        cookie = 'theme=' + encodeURIComponent(theme);
-    cm.setOption('theme', theme);
-    document.cookie = cookie;
-    // Todo: We might change the site location (or opportunity to copy-paste the link) to provide a chance to bookmark the theme
+  const theme = this.options[this.selectedIndex].value,
+    cookie = 'theme=' + encodeURIComponent(theme);
+  cm.setOption('theme', theme);
+  document.cookie = cookie;
+  // Todo: We might change the site location (or opportunity to copy-paste the link) to provide a chance to bookmark the theme
 }
 $('#themes').addEventListener('click', themes);
 $('#themes').addEventListener('keypress', themes);
 
 if (choice) {
-    choice = decodeURIComponent(choice);
-    $('#themes').value = choice;
-    cm.setOption('theme', choice);
+  choice = decodeURIComponent(choice);
+  $('#themes').value = choice;
+  cm.setOption('theme', choice);
 }
     </script>
     <!-- Themes -->

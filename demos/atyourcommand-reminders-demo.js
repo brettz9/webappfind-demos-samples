@@ -12,15 +12,15 @@ const RemindersApp = Application('Reminders');
  * @returns {void}
  */
 function run (argv) { // lgtm [js/unused-local-variable]
-    /* eslint-enable no-unused-vars */
-    const [name, date, time] = argv;
+  /* eslint-enable no-unused-vars */
+  const [name, date, time] = argv;
 
-    // Dates need slashes instead of hyphens for Safari
-    const dueDate = new Date(date + ' ' + time);
+  // Dates need slashes instead of hyphens for Safari
+  const dueDate = new Date(date + ' ' + time);
 
-    const reminder = (Number.isNaN(dueDate.getTime()))
-        ? RemindersApp.Reminder({name}) // Invalid date
-        : RemindersApp.Reminder({name, dueDate});
+  const reminder = (Number.isNaN(dueDate.getTime()))
+    ? RemindersApp.Reminder({name}) // Invalid date
+    : RemindersApp.Reminder({name, dueDate});
 
-    RemindersApp.defaultList.reminders.push(reminder);
+  RemindersApp.defaultList.reminders.push(reminder);
 }
