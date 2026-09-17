@@ -1,0 +1,21 @@
+{
+  "name": "WebAppFind HTML Editor",
+  "short_name": "HTML Editor",
+  "start_url": "./html.html",
+  "display": "browser",
+  "file_handlers": [
+    {
+      "action": "./html.html",
+      "accept": {
+        "text/html": [".html", ".htm"]
+      }
+    }
+  ],
+  "icons": [
+    {
+      "src": "honey_im_subtle.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

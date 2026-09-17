@@ -8,6 +8,7 @@
     <script src="register.js"></script>
     <link rel="stylesheet" href="ckeditor/samples/sample.css" />
     <link rel="stylesheet" href="html.css" />
+    <link rel="manifest" href="html.webmanifest" />
 </head>
 <body>
     <div id="actions"></div>
@@ -28,7 +29,7 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {jml} from '../node_modules/jamilih/dist/jml-es.js';
 
-let editor, backgroundColor,
+let editor, backgroundColor, fileHandle,
   // Could pass option 'readOnly' if determine from protocol that this is view mode only
   pathID;
 const saveMessage = 'save';
@@ -110,7 +111,7 @@ function createEditor (languageCode) {
           }
         });
 
-        function saveToDisk (e) {
+        async function saveToDisk (e) {
           if (e.type === 'keypress' && (!e.ctrlKey || e.charCode !== 115)) {
             return;
           }
@@ -119,6 +120,17 @@ function createEditor (languageCode) {
             return;
           }
           $('a.cke_button__save').style.backgroundColor = 'blue';
+
+          if (fileHandle) {
+            const writable = await fileHandle.createWritable();
+            await writable.write(editor.getData());
+            await writable.close();
+            setTimeout(function () {
+              $('a.cke_button__save').style.backgroundColor = backgroundColor;
+            }, 300);
+            return;
+          }
+
           window.postMessage({
             webappfind: {
               type: saveMessage,
@@ -143,6 +155,38 @@ function createEditor (languageCode) {
 }
 
 listenForMessages();
+
+if ('launchQueue' in window) {
+  window.launchQueue.setConsumer(async (launchParams) => {
+    if (!launchParams.files.length) {
+      return;
+    }
+    fileHandle = launchParams.files[0];
+    const file = await fileHandle.getFile();
+    const content = await file.text();
+
+    pathID = fileHandle.name;
+    document.title += ': ' + pathID;
+
+    const setEditorData = () => {
+      editor.setData(content);
+      if ($('a.cke_button__save')) {
+        $('a.cke_button__save').disabled = false;
+      }
+    };
+
+    if (editor && editor.status === 'ready') {
+      setEditorData();
+    } else {
+      CKEDITOR.on('instanceReady', function (ev) {
+        if (ev.editor === editor) {
+          setEditorData();
+        }
+      });
+    }
+  });
+}
+
 const languages = $('#languages');
 for (let i = 0; i < window.CKEDITOR_LANGS.length; i++) {
   jml('option', {value: window.CKEDITOR_LANGS[i].code}, [
