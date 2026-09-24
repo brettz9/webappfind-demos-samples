@@ -4,6 +4,7 @@
   "type": "module",
   "description": "Demos and sample files for exploring WebAppFind open web apps from desktop functionality",
   "scripts": {
+    "tsc": "tsc",
     "open-svg": "open-cli http://localhost:8005/node_modules/svgedit/editor/svg-editor-es.html?extensions=ext-webappfind.js",
     "start": "static -p 8005",
     "submodules-init": "git submodule update --init --recursive",
@@ -47,6 +48,7 @@
   "devDependencies": {
     "eslint": "^10.11.0",
     "eslint-config-ash-nazg": "^43.2.3",
+    "jxa-types": "^0.0.12",
     "typescript": "^7.0.2"
   }
 }

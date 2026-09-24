@@ -3,6 +3,14 @@ TODOS
 1. Employ this across all demos, adapting as needed
 */
 
+/* eslint-disable jsdoc/reject-any-type -- API */
+/**
+ * @typedef {[
+ *   (value: PathInfo | PromiseLike<PathInfo>) => void,
+ *   (reason?: any) => void
+ * ]} ResolverInfo
+ */
+/* eslint-enable jsdoc/reject-any-type -- API */
 /**
  * @callback SaveEndCallback
  * @param {object} results
@@ -18,12 +26,12 @@ TODOS
  */
 
 /**
- * @typedef {PlainObject} MessageHandlers
+ * @typedef {object} MessageHandlers
  * @property {ViewCallback} [view]
  * @property {SaveEndCallback} [saveEnd]
  */
 /**
- * @typedef {PlainObject} Options
+ * @typedef {object} Options
  * @property {string[]} [excludedMessages=["save"]] Array of
  *   message types to avoid erring upon encountering (besides
  *   `view` and `save-end`)
@@ -37,10 +45,14 @@ class WebAppFind {
   constructor (messageHandlers, options) {
     messageHandlers ||= {};
     options ||= {};
+
+    /** @type {string|undefined} */
+    this.pathID = undefined;
     // Accepts as arguments: content, pathID
     this.view = messageHandlers.view;
     this.saveEnd = messageHandlers.saveEnd;
     this.excludedMessages = options.excludedMessages || ['save'];
+    /** @type {ResolverInfo[]} */
     this.resolvers = [];
     this.init();
   }
@@ -89,7 +101,7 @@ class WebAppFind {
       case 'view':
         // Populate the contents
         if (this.view) { // Probably should exist, but could be excluded
-          this.view({content, pathID: this.pathID});
+          this.view({content, pathID: /** @type {string} */ (this.pathID)});
         }
         break;
       case 'save-end':
@@ -97,7 +109,7 @@ class WebAppFind {
           this.saveEnd({pathID});
         }
         if (this.resolvers.length) {
-          const [resolve] = this.resolvers.shift();
+          const [resolve] = /** @type {ResolverInfo} */ (this.resolvers.shift());
           resolve({pathID});
         }
         break;
@@ -108,7 +120,10 @@ class WebAppFind {
   }
 
   /**
-   * @typedef {PlainObject} PathInfo
+   * @typedef {Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float16Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array} TypedArray
+   */
+  /**
+   * @typedef {object} PathInfo
    * @property {string} pathID
    */
   /**

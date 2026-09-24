@@ -1,5 +1,8 @@
 /**
- * @external JSONObject
+ * @typedef {JSONObject[]} JSONArray
+ */
+/**
+ * @typedef {null|boolean|number|string|JSONArray} JSONObject
  */
 
 /**
@@ -22,12 +25,12 @@ export function serializeParams (params) {
       }
       value = 'on';
     }
-    return `${s}&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    return `${s}&${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`;
   }, '').slice(1);
 }
 
 /**
- * @param {module:MetaWebAppFind.Params|module:MetaWebAppFind.Params[]} metaInfos
+ * @param {Params|Params[]} metaInfos
  * @returns {undefined}
  */
 export function addMetas (metaInfos) {

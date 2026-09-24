@@ -2,7 +2,7 @@
 'use strict';
 
 /**
- * @typedef {PlainObject} ProtocolHandlerInfo
+ * @typedef {object} ProtocolHandlerInfo
  * @property {string} type type info to be added after 'web+local' within the
  * protocol
  * @property {string} instructions for the visible button text
@@ -14,7 +14,11 @@
  * @param {string} url
  * @returns {void}
  */
-function addRegistrationHandlers (arr, url) { // lgtm [js/unused-local-variable]
+function addRegistrationHandlers (arr, url) {
+  /**
+   * @param {string} sel
+   * @returns {Element|null}
+   */
   function $ (sel) {
     return document.querySelector(sel);
   }
@@ -27,7 +31,9 @@ function addRegistrationHandlers (arr, url) { // lgtm [js/unused-local-variable]
     button.addEventListener('click', function (e) {
       try {
         navigator.registerProtocolHandler(
-          'web+local' + e.target.id, // e.g., web+localviewhtmltype:
+          'web+local' + /** @type {EventTarget & {id: string}} */ (
+            e.target
+          ).id, // e.g., web+localviewhtmltype:
           url
           // method.info
         );
@@ -42,8 +48,8 @@ function addRegistrationHandlers (arr, url) { // lgtm [js/unused-local-variable]
         alert(err);
       }
     });
-    $('#actions').append(button);
-    $('#actions').append(document.createElement('br'));
+    $('#actions')?.append(button);
+    $('#actions')?.append(document.createElement('br'));
   });
 }
 export default addRegistrationHandlers;

@@ -20,8 +20,11 @@ function run (argv) {
   const dueDate = new Date(date + ' ' + time);
 
   const reminder = (Number.isNaN(dueDate.getTime()))
+    // @ts-expect-error -- How to get?
     ? RemindersApp.Reminder({name}) // Invalid date
+    // @ts-expect-error -- How to get?
     : RemindersApp.Reminder({name, dueDate});
 
+  // @ts-expect-error -- How to get?
   RemindersApp.defaultList.reminders.push(reminder);
 }

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext", "dom"],
+    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "noEmit": true,
+    "types": ["jxa-types"],
+    "skipLibCheck": true,
+    "target": "es2020"
+  },
+  "include": ["**/*.js"],
+  "exclude": [
+    "node_modules", "demos/ckeditor", "demos/CodeMirror", "demos/pdf.js",
+    "demos/blockly_compressed.js", "demos/blocks_compressed.js",
+    "demos/csslint.js", "demos/en.js", "demos/jquery.csv.js",
+    "demos/jsonlint.js",
+    "demos/gocr.js", "demos/ocrad.js", "demos/jshint.js",
+    "sample-test-files/blockly-files.js",
+    "sample-test-files/test.js"
+  ]
+}
