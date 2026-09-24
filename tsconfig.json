@@ -7,7 +7,7 @@
     "checkJs": true,
     "strict": true,
     "noEmit": true,
-    "types": ["jxa-types"],
+    "types": ["jxa-types", "pdfjs-dist"],
     "skipLibCheck": true,
     "target": "es2020"
   },

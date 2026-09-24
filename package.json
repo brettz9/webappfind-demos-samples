@@ -43,6 +43,7 @@
     "base64-js": "^1.5.1",
     "jamilih": "^0.70.2",
     "open-cli": "^9.0.0",
+    "pdfjs-dist": "^6.3.289",
     "svgedit": "^5.1.0"
   },
   "devDependencies": {

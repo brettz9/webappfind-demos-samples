@@ -1,4 +1,4 @@
-/* globals PDFJS, OCRAD, GOCR -- Non-ESM */
+/* globals OCRAD, GOCR -- Non-ESM */
 /* eslint-disable no-console -- Debugging */
 
 /*
@@ -7,14 +7,33 @@ Todos:
     a PDF, image, or SVG has been opened and act accordingly in order to OCR.
 */
 
+import * as PDFJS from 'pdfjs-dist';
+
+/**
+ * @param {string} sel
+ * @returns {Element|null}
+ */
 function $ (sel) {
   return document.querySelector(sel);
 }
 
-let pdfObj, canvas, context, initial, endValue, ocrEngine;
+/** @type {import('pdfjs-dist').PDFDocumentProxy} */
+let pdfObj,
+  /** @type {HTMLCanvasElement} */
+  canvas,
+  /** @type {CanvasRenderingContext2D} */
+  context,
+  initial,
+  /** @type {number} */
+  endValue,
+  ocrEngine;
 const saveMessage = 'save',
   excludedMessages = [saveMessage];
 
+/**
+ * @param {number} pgNum
+ * @returns {Promise<void>}
+ */
 async function getPDF (pgNum) {
   // Using promise to fetch the page
   const page = await pdfObj.getPage(pgNum);
@@ -45,12 +64,16 @@ async function getPDF (pgNum) {
   }
   getPDF(pgNum + 1);
 }
+
+/**
+ * @returns {void}
+ */
 function resetPDF () {
   $('#begin').readOnly = true;
   $('#end').readOnly = true;
   $('#ocr-output').readOnly = true;
   $('#ocr-output').value = '';
-  canvas = $('#the-canvas');
+  canvas = /** @type {HTMLCanvasElement} */ ($('#the-canvas'));
   context = canvas.getContext('2d');
   $('#message').style.visibility = 'visible';
   canvas.style.visibility = 'hidden';
@@ -71,13 +94,17 @@ function resetPDF () {
   getPDF(initial);
 }
 
+/**
+ * @param {} doc
+ * @returns {Promise<>}
+ */
 async function setPDF (doc) {
   // Fetch the PDF document using promises
   //
-  const pdf = await PDFJS.getDocument(
+  const pdf = await (PDFJS.getDocument(
     doc
     // 'helloworld.pdf'
-  );
+  ).promise);
     // $('#begin').min = $('#end').min = 1;
   $('#begin').max = $('#end').max = $('#end').placeholder = pdf.numPages;
   $('#begin').title = $('#end').title = 'Max: ' + pdf.numPages + ' pages';
