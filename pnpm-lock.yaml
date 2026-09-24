@@ -24,7 +24,7 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0(supports-color@7.2.0)
       svgedit:
-        specifier: ^5.0.0
+        specifier: ^5.1.0
         version: 5.1.0
     devDependencies:
       eslint:
