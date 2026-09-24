@@ -9,7 +9,7 @@
 <body>
 <img />
 <script type="module">
-/* globals base64js */
+/* globals base64js -- Non-ESM */
 
 let pathID;
 const saveMessage = 'save',
@@ -39,7 +39,7 @@ window.addEventListener('message', function ({data, origin: orig}) {
     // $('#save').disabled = false;
     break;
   } case 'save-end':
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console -- Debugging
     console.log('save complete for pathID ' + pathID + '!');
     break;
   default:

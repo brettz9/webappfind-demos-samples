@@ -17,7 +17,7 @@
 </div>
 <img />
 <script type="module">
-/* globals base64js */
+/* globals base64js -- Non-ESM */
 
 function $ (sel) {
   return document.querySelector(sel);
@@ -34,7 +34,7 @@ const saveMessage = 'save',
     link.type = icoMIME;
     link.rel = 'shortcut icon';
     link.href = img.src;
-    document.querySelectorAll('head')[0].append(link);
+    document.querySelector('head').append(link);
   },
   replaceFavicon = function (icon, canvas) {
     const newIcon = icon.cloneNode(true);
@@ -76,7 +76,7 @@ window.addEventListener('message', function ({data, origin: orig}) {
     // $('#save').disabled = false;
     break;
   } case 'save-end':
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console -- Debugging
     console.log(`save complete for pathID ${pathID}!`);
     break;
   default:

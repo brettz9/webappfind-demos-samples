@@ -7,14 +7,14 @@
     <body>
         <script>
         window.addEventListener('message', function ({origin: orig, data}) {
-          if (orig !== location.origin ||
-                !data || !data.webappfind || !data.webappfind.type
+          if (!data || orig !== location.origin ||
+                !data.webappfind || !data.webappfind.type
           ) {
             return;
           }
           // use indirect (global) eval()
-          // eslint-disable-next-line no-eval
-          (1, eval)(data.webappfind.content); // lgtm [js/code-injection]
+          // eslint-disable-next-line no-eval -- Necessary
+          (1, eval)(data.webappfind.content);
         });
         </script>
     </body>

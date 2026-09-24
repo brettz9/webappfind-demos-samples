@@ -5,15 +5,15 @@
         <title>AsYouWish Demo: Node File Server</title>
         <script type="module">
         function getBasePath () {
-          const params = new URLSearchParams(window.location.hash.slice(1));
+          const params = new URLSearchParams(location.hash.slice(1));
           return params.has('path') ? params.get('path') + '/' : '/';
         }
 
         function changePath () {
           const basePath = getBasePath();
-          if (!basePath.match(/^[\w./ -]*$/)) {
+          if (!(/^[\w./ -]*$/).test(basePath)) {
             // Todo: Refactor to allow non-ASCII and just escape single quotes, etc.
-            // eslint-disable-next-line no-console
+            // eslint-disable-next-line no-console -- Debugging
             console.log('Non-ASCII path provided');
             return;
           }
@@ -30,7 +30,7 @@
           }, '*');
         }
 
-        window.addEventListener('hashchange', changePath);
+        addEventListener('hashchange', changePath);
         window.addEventListener('message', ({data: {webappfind}}) => {
           if (webappfind.method) { // Don't echo items just posted below
             return;
@@ -42,10 +42,7 @@
           const basePath = getBasePath();
           document.querySelector('i').hidden = true;
           const ul = document.querySelector('ul');
-          while (ul.firstChild) {
-            ul.firstChild.remove();
-          }
-          ul.append(...webappfind.result.map(([isDir, title]) => {
+          ul.replaceChildren(...webappfind.result.map(([isDir, title]) => {
             const li = document.createElement('li');
             if (isDir) {
               const a = document.createElement('a');

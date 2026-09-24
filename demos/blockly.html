@@ -182,7 +182,7 @@
     <category name="Procedures" custom="PROCEDURE"></category>
 </xml>
 <script>
-/* globals Blockly */
+/* globals Blockly -- Non-ESM */
 
 // Todo: Get updates from https://github.com/google/blockly
 
@@ -214,12 +214,11 @@ window.addEventListener('message', function ({data, origin: orig}) {
     return;
   }
 
-  let xml;
   switch (type) {
   case 'view':
     // Populate the contents
     try {
-      xml = Blockly.Xml.textToDom(content);
+      const xml = Blockly.Xml.textToDom(content);
       Blockly.Xml.domToWorkspace(Blockly.mainWorkspace, xml);
     } finally {
       $('#save').disabled = false;

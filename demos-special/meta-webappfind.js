@@ -3,12 +3,11 @@
  */
 
 /**
-* @typedef {PlainObject<string, boolean|string|string[]|external:JSONObject>}
-* module:MetaWebAppFind.Params
-*/
+ * @typedef {Object<string, boolean|string|string[]|JSONObject>} Params
+ */
 
 /**
- * @param {module:MetaWebAppFind.Params} params
+ * @param {Params} params
  * @returns {string}
  */
 export function serializeParams (params) {
@@ -68,7 +67,7 @@ export function addMetas (metaInfos) {
   mode: 'edit',
   executablePath: 'some/path/'
   binary: true,
-  site: 'http://example.com'
+  site: 'https://example.com'
 },
 {
   executableName: 'anotherExecName',

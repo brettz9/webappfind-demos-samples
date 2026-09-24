@@ -1,6 +1,5 @@
-/* globals PDFJS, OCRAD, GOCR */
-/* eslint-disable no-console */
-/* eslint-env browser */
+/* globals PDFJS, OCRAD, GOCR -- Non-ESM */
+/* eslint-disable no-console -- Debugging */
 
 /*
 Todos:
@@ -20,6 +19,7 @@ async function getPDF (pgNum) {
   // Using promise to fetch the page
   const page = await pdfObj.getPage(pgNum);
   const scale = 1.5;
+  // eslint-disable-next-line no-shadow -- Convenient
   const viewport = page.getViewport(scale);
 
   // Prepare canvas using PDF page dimensions
@@ -43,7 +43,7 @@ async function getPDF (pgNum) {
     canvas.style.visibility = 'visible';
     return;
   }
-  getPDF(++pgNum);
+  getPDF(pgNum + 1);
 }
 function resetPDF () {
   $('#begin').readOnly = true;
@@ -54,8 +54,8 @@ function resetPDF () {
   context = canvas.getContext('2d');
   $('#message').style.visibility = 'visible';
   canvas.style.visibility = 'hidden';
-  initial = parseInt($('#begin').value) || 1;
-  endValue = parseInt($('#end').value);
+  initial = parseInt($('#begin').value, 10) || 1;
+  endValue = parseInt($('#end').value, 10);
   if (initial > pdfObj.numPages) {
     initial = pdfObj.numPages;
     $('#begin').value = pdfObj.numPages;
@@ -88,16 +88,12 @@ async function setPDF (doc) {
   $('#end').addEventListener('change', resetPDF);
 }
 
-$('#pdfFile').addEventListener('change', function (ev) {
+$('#pdfFile').addEventListener('change', async function (ev) {
   const f = ev.target.files[0];
 
-  const reader = new FileReader();
-  reader.addEventListener('load', function (e) {
-    const arrayBuffer = e.target.result;
-    const array = new Uint8Array(arrayBuffer);
-    setPDF(array);
-  });
-  reader.readAsArrayBuffer(f);
+  const arrayBuffer = await f.arrayBuffer();
+  const array = new Uint8Array(arrayBuffer);
+  setPDF(array);
 });
 
 let pathID;

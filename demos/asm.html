@@ -44,7 +44,7 @@
     <link href="javascript.css" rel="stylesheet" />
 
     <script type="module">
-/* globals CodeMirror */
+/* globals CodeMirror -- Non-ESM */
 /*
 TODOS:
 1. We could allow separate tabs when new pathIDs are obtained via our message listener
@@ -60,7 +60,7 @@ function $ (sel) {
 // Could pass option 'readOnly' if determine from protocol that this is view mode only
 function makeMarker () {
   const marker = document.createElement('div');
-  marker.append(document.createTextNode('\u25CF'));
+  marker.append(document.createTextNode('\u{25CF}'));
   marker.className = 'CodeMirror-breakpoint';
   return marker;
 }
@@ -84,17 +84,19 @@ const breakpointsClass = 'CodeMirror-breakpoints',
     // indentWithTabs: true,
     autoCloseBrackets: true,
     highlightSelectionMatches: {showToken: /\w/},
-    viewportMargin: Infinity, // Make sure whole doc is rendered so browser text search will work; will badly affect large docs per http://codemirror.net/doc/manual.html#option_viewportMargin
+    viewportMargin: Infinity, // Make sure whole doc is rendered so browser text search will work; will badly affect large docs per https://codemirror.net/doc/manual.html#option_viewportMargin
     extraKeys: {
-      'Ctrl-Q' (codem) { codem.foldCode(codem.getCursor()); },
+      'Ctrl-Q' (codem) {
+        codem.foldCode(codem.getCursor());
+      },
       'Ctrl-Space': 'autocomplete',
       Tab (codem) {
-        const spaces = new Array(codem.getOption('indentUnit') + 1).join(' ');
+        const spaces = Array.from({length: codem.getOption('indentUnit') + 1}).join(' ');
         codem.replaceSelection(spaces, 'end', '+input');
       }
     },
     foldGutter: {
-      // eslint-disable-next-line new-cap
+      // eslint-disable-next-line new-cap -- API
       rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment)
     },
     gutters: ['CodeMirror-lint-markers', 'CodeMirror-foldgutter', 'CodeMirror-linenumbers', breakpointsClass],
@@ -104,7 +106,7 @@ const breakpointsClass = 'CodeMirror-breakpoints',
 let choice = (document.location.search && document.location.search.match(urlThemePattern)) ||
         (document.cookie && document.cookie.match(cookieThemePattern)) ||
         '';
-choice = choice && choice[1];
+choice &&= choice[1];
 
 cm.on('gutterClick', function (codem, n, clickedGutterClass) { // , e
   if (clickedGutterClass !== breakpointsClass) {
@@ -149,7 +151,7 @@ $('#save').addEventListener('click', function () {
     return;
   }
 
-  // eslint-disable-next-line no-console
+  // eslint-disable-next-line no-console -- Debugging
   console.log('cm.getValue()', cm.getValue(), saveMessage, pathID, location.origin);
   window.postMessage({
     webappfind: {
@@ -164,6 +166,7 @@ function themes () {
   const theme = this.options[this.selectedIndex].value,
     cookie = 'theme=' + encodeURIComponent(theme);
   cm.setOption('theme', theme);
+  // eslint-disable-next-line unicorn/no-document-cookie -- Convenient
   document.cookie = cookie;
   // Todo: We might change the site location (or opportunity to copy-paste the link) to provide a chance to bookmark the theme
 }

@@ -9,6 +9,13 @@
     <link rel="stylesheet" href="ckeditor/samples/sample.css" />
     <link rel="stylesheet" href="html.css" />
     <link rel="manifest" href="html.webmanifest" />
+    <script type="importmap">
+      {
+        "imports": {
+          "jamilih": "../node_modules/jamilih/dist/jml.mjs"
+        }
+      }
+    </script>
 </head>
 <body>
     <div id="actions"></div>
@@ -25,9 +32,8 @@
         </form>
     </div>
 <script type="module">
-/* globals CKEDITOR */
-// eslint-disable-next-line node/no-unpublished-import
-import {jml} from '../node_modules/jamilih/dist/jml-es.js';
+/* globals CKEDITOR -- Non-ESM */
+import {jml} from 'jamilih';
 
 let editor, backgroundColor, fileHandle,
   // Could pass option 'readOnly' if determine from protocol that this is view mode only
@@ -78,13 +84,13 @@ function createEditor (languageCode) {
   }
 
   // Replace the <textarea id="editor"> with an CKEditor
-  // instance, using default configurations.
+  //   instance, using default configurations.
   editor = CKEDITOR.replace('editor1', {
     language: languageCode,
     on: {
       instanceReady () {
         // Wait for the editor to be ready to set
-        // the language combo.
+        //   the language combo.
         editor.execCommand('maximize'); // Full screen mode
         const languages = document.querySelector('#languages');
         languages.value = this.langCode;
@@ -106,7 +112,7 @@ function createEditor (languageCode) {
         editor.on('beforeCommandExec', function ({data}) {
           if (data.name === 'save') {
             // Todo: What is this for?
-            // eslint-disable-next-line no-throw-literal
+            // eslint-disable-next-line no-throw-literal -- What is this for?
             throw '';
           }
         });
@@ -156,8 +162,8 @@ function createEditor (languageCode) {
 
 listenForMessages();
 
-if ('launchQueue' in window) {
-  window.launchQueue.setConsumer(async (launchParams) => {
+if ('launchQueue' in globalThis) {
+  launchQueue.setConsumer(async (launchParams) => {
     if (!launchParams.files.length) {
       return;
     }
@@ -188,14 +194,14 @@ if ('launchQueue' in window) {
 }
 
 const languages = $('#languages');
-for (let i = 0; i < window.CKEDITOR_LANGS.length; i++) {
-  jml('option', {value: window.CKEDITOR_LANGS[i].code}, [
-    window.CKEDITOR_LANGS[i].name
+for (let i = 0; i < globalThis.CKEDITOR_LANGS.length; i++) {
+  jml('option', {value: globalThis.CKEDITOR_LANGS[i].code}, [
+    globalThis.CKEDITOR_LANGS[i].name
   ], languages);
 }
 
 // Set the number of languages.
-jml('span', [window.CKEDITOR_LANGS.length], $('#count'));
+jml('span', [globalThis.CKEDITOR_LANGS.length], $('#count'));
 
 languages.addEventListener('change', function () {
   createEditor(this.value);

@@ -37,7 +37,7 @@
     <link href="javascript.css" rel="stylesheet" />
 
     <script type="module">
-/* globals CodeMirror */
+/* globals CodeMirror -- Not ESM */
 /*
 TODOS:
 1. We could allow separate tabs when new pathIDs are obtained via our message listener
@@ -53,7 +53,7 @@ function $ (sel) {
 // Could pass option 'readOnly' if determine from protocol that this is view mode only
 function makeMarker () {
   const marker = document.createElement('div');
-  marker.append(document.createTextNode('\u25CF'));
+  marker.append(document.createTextNode('\u{25CF}'));
   marker.className = 'CodeMirror-breakpoint';
   return marker;
 }
@@ -80,7 +80,7 @@ function completeIfAfterLt(cm) {
 function completeIfInTag (cm) {
   return completeAfter(cm, function () {
     const tok = cm.getTokenAt(cm.getCursor());
-    if (tok.type === 'string' && (!(/['"]/).test(tok.string.charAt(tok.string.length - 1)) || tok.string.length === 1)) {
+    if (tok.type === 'string' && (!(/['"]/).test(tok.string.at(-1)) || tok.string.length === 1)) {
       return false;
     }
     const inner = CodeMirror.innerMode(cm.getMode(), tok.state).state;
@@ -105,7 +105,7 @@ const breakpointsClass = 'CodeMirror-breakpoints',
     indentUnit: 4,
     // indentWithTabs: true,
     highlightSelectionMatches: {showToken: /\w/},
-    viewportMargin: Infinity, // Make sure whole doc is rendered so browser text search will work; will badly affect large docs per http://codemirror.net/doc/manual.html#option_viewportMargin
+    viewportMargin: Infinity, // Make sure whole doc is rendered so browser text search will work; will badly affect large docs per https://codemirror.net/doc/manual.html#option_viewportMargin
     matchTags: {bothTags: true},
     autoCloseTags: true,
     extraKeys: {
@@ -114,15 +114,17 @@ const breakpointsClass = 'CodeMirror-breakpoints',
       "' '": completeIfInTag,
       "'='": completeIfInTag,
       'Ctrl-J': 'toMatchingTag',
-      'Ctrl-Q' (codem) { codem.foldCode(codem.getCursor()); },
+      'Ctrl-Q' (codem) {
+        codem.foldCode(codem.getCursor());
+      },
       'Ctrl-Space': 'autocomplete',
       Tab (codem) {
-        const spaces = new Array(codem.getOption('indentUnit') + 1).join(' ');
+        const spaces = Array.from({length: codem.getOption('indentUnit') + 1}).join(' ');
         codem.replaceSelection(spaces, 'end', '+input');
       }
     },
     foldGutter: {
-      // eslint-disable-next-line new-cap
+      // eslint-disable-next-line new-cap -- API
       rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.xml, CodeMirror.fold.comment)
     },
     gutters: ['CodeMirror-lint-markers', 'CodeMirror-foldgutter', 'CodeMirror-linenumbers', breakpointsClass],
@@ -133,7 +135,7 @@ let pathID;
 let choice = (document.location.search && document.location.search.match(urlThemePattern)) ||
         (document.cookie && document.cookie.match(cookieThemePattern)) ||
         '';
-choice = choice && choice[1];
+choice &&= choice[1];
 
 cm.on('gutterClick', function (codem, n, clickedGutterClass) { // , e
   if (clickedGutterClass !== breakpointsClass) {
@@ -184,7 +186,7 @@ $('#save').addEventListener('click', function () {
       throw new Error('Bad XML');
     }
   } catch (e) {
-    saveAnyways = window.confirm('The code present in the editor is not well-formed XML. Save anyways?');
+    saveAnyways = confirm('The code present in the editor is not well-formed XML. Save anyways?');
   }
   if (saveAnyways) {
     window.postMessage({
@@ -201,6 +203,7 @@ function themes () {
   const theme = this.options[this.selectedIndex].value,
     cookie = 'theme=' + encodeURIComponent(theme);
   cm.setOption('theme', theme);
+  // eslint-disable-next-line unicorn/no-document-cookie -- Ok?
   document.cookie = cookie;
   // Todo: We might change the site location (or opportunity to copy-paste the link) to provide a chance to bookmark the theme
 }

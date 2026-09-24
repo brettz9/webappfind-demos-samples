@@ -1,0 +1,7 @@
+allowBuilds:
+  core-js: true
+  is-hidden-file: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - eslint-config-ash-nazg@43.2.3
+  - eslint-plugin-html@8.2.1

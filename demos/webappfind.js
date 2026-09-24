@@ -4,37 +4,39 @@ TODOS
 */
 
 /**
- * @callback module:WebAppFind.SaveEndCallback
- * @param {PlainObject} results
+ * @callback SaveEndCallback
+ * @param {object} results
  * @param {string} results.pathID
+ * @returns {void}
  */
 /**
- * @callback module:WebAppFind.ViewCallback
- * @param {PlainObject} results
+ * @callback ViewCallback
+ * @param {object} results
  * @param {string|TypedArray} results.content
  * @param {string} results.pathID
+ * @returns {void}
  */
 
 /**
-* @typedef {PlainObject} module:WebAppFind.MessageHandlers
-* @property {module:WebAppFind.ViewCallback} [view]
-* @property {module:WebAppFind.SaveEndCallback} [saveEnd]
-*/
+ * @typedef {PlainObject} MessageHandlers
+ * @property {ViewCallback} [view]
+ * @property {SaveEndCallback} [saveEnd]
+ */
 /**
-* @typedef {PlainObject} module:WebAppFind.Options
-* @property {string[]} [excludedMessages=["save"]] Array of
-*   message types to avoid erring upon encountering (besides
-*   `view` and `save-end`)
-*/
+ * @typedef {PlainObject} Options
+ * @property {string[]} [excludedMessages=["save"]] Array of
+ *   message types to avoid erring upon encountering (besides
+ *   `view` and `save-end`)
+ */
 
 class WebAppFind {
   /**
-     * @param {module:WebAppFind.MessageHandlers} [messageHandlers]
-     * @param {module:WebAppFind.Options} [options]
-     */
+   * @param {MessageHandlers} [messageHandlers]
+   * @param {Options} [options]
+   */
   constructor (messageHandlers, options) {
-    messageHandlers = messageHandlers || {};
-    options = options || {};
+    messageHandlers ||= {};
+    options ||= {};
     // Accepts as arguments: content, pathID
     this.view = messageHandlers.view;
     this.saveEnd = messageHandlers.saveEnd;
@@ -44,11 +46,11 @@ class WebAppFind {
   }
 
   /**
-     * @returns {undefined}
-     */
+   * @returns {undefined}
+   */
   init () {
     if (!document.body) {
-      window.addEventListener(
+      addEventListener(
         'DOMContentLoaded',
         this.addListeners.bind(this)
       );
@@ -58,8 +60,8 @@ class WebAppFind {
   }
 
   /**
-     * @returns {undefined}
-     */
+   * @returns {undefined}
+   */
   addListeners () {
     window.addEventListener('message', ({data, origin: orig}) => {
       // Could allow config to loosen for whitelisted sites
@@ -79,7 +81,7 @@ class WebAppFind {
         }
         Object.assign(this, {type, pathID, content});
       } catch (err) {
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console -- Debugging
         console.log('err', err);
         return;
       }
@@ -106,9 +108,9 @@ class WebAppFind {
   }
 
   /**
-  * @typedef {PlainObject} PathInfo
-  * @property {string} pathID
-  */
+   * @typedef {PlainObject} PathInfo
+   * @property {string} pathID
+   */
   /**
    * @param {string|TypedArray} content Content to save
    * @returns {Promise<PathInfo>} Resolves to an object with a `pathID` string
@@ -122,7 +124,7 @@ class WebAppFind {
                 'file from an executable or command line and in edit mode.'
       );
     }
-    // eslint-disable-next-line promise/avoid-new
+    // eslint-disable-next-line promise/avoid-new -- Own API, but why using a Promise?
     return new Promise((resolve, reject) => {
       this.resolvers.push([resolve, reject]);
       window.postMessage({

@@ -14,7 +14,9 @@
                 method: 'addonEval',
                 string: `
             browser.tabs.query({}).then((tabs) => {
-                return tabs.map(({title}) => title);
+                return tabs.map(({
+                  title
+                }) => title);
             });
                         `
               }
