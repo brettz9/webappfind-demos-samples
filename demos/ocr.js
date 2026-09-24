@@ -11,10 +11,28 @@ import * as PDFJS from 'pdfjs-dist';
 
 /**
  * @param {string} sel
- * @returns {Element|null}
+ * @returns {HTMLElement}
  */
 function $ (sel) {
-  return document.querySelector(sel);
+  // We are ensuring our elements always exist
+  return /** @type {HTMLElement} */ (document.querySelector(sel));
+}
+
+/**
+ * @param {string} sel
+ * @returns {HTMLInputElement}
+ */
+function $i (sel) {
+  // We are ensuring our elements always exist
+  return /** @type {HTMLInputElement} */ (document.querySelector(sel));
+}
+/**
+ * @param {string} sel
+ * @returns {HTMLTextAreaElement}
+ */
+function $t (sel) {
+  // We are ensuring our elements always exist
+  return /** @type {HTMLTextAreaElement} */ (document.querySelector(sel));
 }
 
 /** @type {import('pdfjs-dist').PDFDocumentProxy} */
@@ -26,6 +44,7 @@ let pdfObj,
   initial,
   /** @type {number} */
   endValue,
+  /** @type {(canvas: HTMLCanvasElement) => string} */
   ocrEngine;
 const saveMessage = 'save',
   excludedMessages = [saveMessage];
@@ -39,7 +58,7 @@ async function getPDF (pgNum) {
   const page = await pdfObj.getPage(pgNum);
   const scale = 1.5;
   // eslint-disable-next-line no-shadow -- Convenient
-  const viewport = page.getViewport(scale);
+  const viewport = page.getViewport({scale});
 
   // Prepare canvas using PDF page dimensions
   canvas.height = viewport.height;
@@ -47,17 +66,18 @@ async function getPDF (pgNum) {
 
   // Render PDF page into canvas context
   const renderContext = {
+    canvas,
     canvasContext: context,
     viewport
   };
   await page.render(renderContext).promise;
   const string = ocrEngine(canvas);
-  $('#ocr-output').value += string;
-  $('#ocr-output').blur();
+  $t('#ocr-output').value += string;
+  $t('#ocr-output').blur();
   if (pgNum === endValue) {
-    $('#ocr-output').readOnly = false;
-    $('#begin').readOnly = false;
-    $('#end').readOnly = false;
+    $t('#ocr-output').readOnly = false;
+    $i('#begin').readOnly = false;
+    $i('#end').readOnly = false;
     $('#message').style.visibility = 'hidden';
     canvas.style.visibility = 'visible';
     return;
@@ -69,34 +89,39 @@ async function getPDF (pgNum) {
  * @returns {void}
  */
 function resetPDF () {
-  $('#begin').readOnly = true;
-  $('#end').readOnly = true;
-  $('#ocr-output').readOnly = true;
-  $('#ocr-output').value = '';
+  $i('#begin').readOnly = true;
+  $i('#end').readOnly = true;
+  $t('#ocr-output').readOnly = true;
+  $t('#ocr-output').value = '';
   canvas = /** @type {HTMLCanvasElement} */ ($('#the-canvas'));
-  context = canvas.getContext('2d');
+  context = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
   $('#message').style.visibility = 'visible';
   canvas.style.visibility = 'hidden';
-  initial = parseInt($('#begin').value, 10) || 1;
-  endValue = parseInt($('#end').value, 10);
+  initial = parseInt($i('#begin').value, 10) || 1;
+  endValue = parseInt($i('#end').value, 10);
   if (initial > pdfObj.numPages) {
     initial = pdfObj.numPages;
-    $('#begin').value = pdfObj.numPages;
+    $i('#begin').value = String(pdfObj.numPages);
   }
   if (!endValue || endValue < initial) {
     endValue = initial;
-    $('#end').value = initial;
+    $i('#end').value = String(initial);
   } else if (endValue > pdfObj.numPages) {
     endValue = pdfObj.numPages;
-    $('#end').value = pdfObj.numPages;
+    $i('#end').value = String(pdfObj.numPages);
   }
-  ocrEngine = $('#ocrad').checked ? OCRAD : GOCR;
+  // Todo: Switch to `tesseract.js` for greater accuracy (and TypeScript as well)
+  ocrEngine = $i('#ocrad').checked
+    // @ts-expect-error -- No types
+    ? OCRAD
+    // @ts-expect-error -- No types
+    : GOCR;
   getPDF(initial);
 }
 
 /**
- * @param {} doc
- * @returns {Promise<>}
+ * @param {{data: Uint8Array|string}} doc
+ * @returns {Promise<void>}
  */
 async function setPDF (doc) {
   // Fetch the PDF document using promises
@@ -106,26 +131,30 @@ async function setPDF (doc) {
     // 'helloworld.pdf'
   ).promise);
     // $('#begin').min = $('#end').min = 1;
-  $('#begin').max = $('#end').max = $('#end').placeholder = pdf.numPages;
-  $('#begin').title = $('#end').title = 'Max: ' + pdf.numPages + ' pages';
+  $i('#begin').max = $i('#end').max = $i('#end').placeholder = String(pdf.numPages);
+  $i('#begin').title = $i('#end').title = 'Max: ' + pdf.numPages + ' pages';
   pdfObj = pdf;
-  $('#begin').readOnly = false;
-  $('#end').readOnly = false;
-  $('#begin').addEventListener('change', resetPDF);
-  $('#end').addEventListener('change', resetPDF);
+  $i('#begin').readOnly = false;
+  $i('#end').readOnly = false;
+  $i('#begin').addEventListener('change', resetPDF);
+  $i('#end').addEventListener('change', resetPDF);
 }
 
-$('#pdfFile').addEventListener('change', async function (ev) {
-  const f = ev.target.files[0];
+$i('#pdfFile').addEventListener('change', async function (ev) {
+  const f = /** @type {File} */ (
+    /** @type {HTMLInputElement} */ (ev.target)?.files?.[0]
+  );
 
   const arrayBuffer = await f.arrayBuffer();
   const array = new Uint8Array(arrayBuffer);
-  setPDF(array);
+  setPDF({data: array});
 });
 
 let pathID;
 window.addEventListener('message', function ({data, origin: orig}) {
-  let type, content;
+  let type,
+    /** @type {{data: string}} */
+    content;
   try {
     // May throw if data is not an object
     ({type, pathID, content} = data.webappfind);
